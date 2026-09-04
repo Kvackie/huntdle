@@ -12,6 +12,11 @@
  *   src/data/bestiary.json    + public/bestiary/<slug>.jpg
  *
  *   node scripts/scrape-extras.mjs
+ *
+ * Deliberately has no npm script. Running this OVERWRITES everything in public/traits/
+ * and public/bestiary/ — and several creature images there were replaced by hand
+ * because the wiki's own art was poor. Check `git status` afterwards and restore with
+ * `git checkout -- public/bestiary/` if this has undone them.
  */
 import { writeFile, mkdir, readdir, unlink } from 'node:fs/promises'
 import path from 'node:path'
@@ -95,6 +100,14 @@ async function scrapeTraits() {
     const cost = Number(f.Cost)
     const unlock = Number(f.Unlock)
 
+    // Cut traits the game no longer has. The wiki keeps their pages in Category:Traits
+    // with no marker on the infobox — the only signal is the update history saying so,
+    // and their Cost/Unlock fields being left blank. Blankness alone isn't enough to go
+    // on: event and pact traits are blank too and are very much still in the game.
+    const removed = /removed from the game|no longer (?:available|in the game)|has been removed/i.test(
+      wikitext,
+    )
+
     traits.push({
       id: slugify(name),
       name,
@@ -113,6 +126,7 @@ async function scrapeTraits() {
       description: stripWikitext(
         wikitext.match(/\}\}\s*\n+\[\[File:[^\]]*\]\]\s*\n+([^\n=]{20,})/)?.[1] ?? '',
       ),
+      removed,
       imageSmall: (f.image ?? '').trim() || null,
       imageBanner: banner,
     })
@@ -221,7 +235,10 @@ async function main() {
     `  ${traits.length} traits, ${traits.filter((t) => t.icon).length} icons, ` +
       `${traits.filter((t) => t.banner).length} banners`,
   )
-  console.log(`  free (event/pact traits): ${traits.filter((t) => t.cost === 0).length}`)
+  const gone = traits.filter((t) => t.removed)
+  console.log(`  free (event/pact traits): ${traits.filter((t) => t.cost === 0 && !t.removed).length}`)
+  console.log(`  removed from the game (excluded from play): ${gone.length}`)
+  if (gone.length) console.log(`      ${gone.map((t) => t.name).join(', ')}`)
 
   console.log('Bestiary…')
   const bestiary = await scrapeBestiary()

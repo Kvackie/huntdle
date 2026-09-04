@@ -540,11 +540,11 @@ a:hover {
   aspect-ratio: 16 / 9;
 }
 
-/* Bestiary plates are ~368x560. The four creatures with no plate fall back to wide art
-   and get centre-cropped, which still lands on the creature. */
+/* Creature art ranges from ~0.66 (bestiary plates) to ~1.0 (model renders), so the
+   frame sits between the two and the art is fitted inside rather than cropped. */
 .portrait__frame--plate {
-  width: min(380px, 72vw);
-  aspect-ratio: 368 / 560;
+  width: min(420px, 78vw);
+  aspect-ratio: 3 / 4;
 }
 
 /*
@@ -639,6 +639,21 @@ a:hover {
   .attempts {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/*
+ * Shown under a guess whose every attribute matches but which isn't the answer.
+ * With only three columns, most traits share a combination with several others, so
+ * this has to be said outright or the board looks wrong.
+ */
+.grid__note {
+  margin: -2px 0 2px;
+  padding: 0.45rem 0.7rem;
+  background: rgba(156, 133, 79, 0.12);
+  border-left: 2px solid var(--brass);
+  color: var(--text);
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
 }
 
 /* ----------------------------------------------------------------- victory */

@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { compare, type Column } from '../lib/grid'
 import type { Guessable } from '../lib/core'
 
@@ -37,8 +38,16 @@ export function GuessGrid<T extends Guessable>({
 
         {guesses.map((guess, row) => {
           const src = imageOf(guess)
+          const cells = compare(guess, answer, columns)
+          // These attributes don't always identify a single subject — 77% of traits
+          // share their cost/category/type with another. Without saying so, an
+          // all-green wrong guess just looks broken.
+          const indistinguishable =
+            guess.id !== answer.id && cells.every((c) => c.verdict === 'hit')
+
           return (
-            <div className="grid__row" key={guess.id} role="row">
+            <Fragment key={guess.id}>
+            <div className="grid__row" role="row">
               <div className="cell cell--weapon">
                 {src ? (
                   <img src={src} alt="" className="cell__icon" />
@@ -48,7 +57,7 @@ export function GuessGrid<T extends Guessable>({
                 <span className="cell__name">{guess.name}</span>
               </div>
 
-              {compare(guess, answer, columns).map((cell, i) => (
+              {cells.map((cell, i) => (
                 <div
                   key={cell.key}
                   className={`cell cell--${cell.verdict}`}
@@ -71,6 +80,12 @@ export function GuessGrid<T extends Guessable>({
                 </div>
               ))}
             </div>
+            {indistinguishable && (
+              <p className="grid__note" role="status">
+                Close but not quite. Every attribute matches, but it isn't the answer.
+              </p>
+            )}
+            </Fragment>
           )
         })}
       </div>

@@ -13,7 +13,7 @@ type Mode = 'daily' | 'endless'
 
 const GAMES: { id: Game; label: string; blurb: string }[] = [
   { id: 'weapon', label: 'Weapon', blurb: `Guess the weapon from ${WEAPONS.length}.` },
-  { id: 'trait', label: 'Trait', blurb: `Guess the trait from ${TRAITS.length}, by cost, category and type.` },
+  { id: 'trait', label: 'Trait', blurb: `Guess the trait from ${TRAITS.length}, by cost, rank, category and type.` },
   { id: 'quote', label: 'Hunter quote', blurb: `Name the hunter from their lore, ${HUNTERS.length} in play.` },
   { id: 'portrait', label: 'Hunter art', blurb: `Name the hunter from a blurred portrait, ${HUNTERS_WITH_PORTRAIT.length} in play.` },
   { id: 'trait-icon', label: 'Trait icon', blurb: `Name the trait from a blurred icon, ${TRAITS_WITH_BANNER.length} in play.` },
@@ -183,6 +183,9 @@ export default function App() {
             imageOf={(c) => c.art}
             wikiUrlOf={(c) => c.wikiUrl}
             frame="plate"
+            // Creature art is a mix of tall bestiary plates and squarer renders, so a
+            // single crop would cut the head off one shape or the other.
+            fit="contain"
             subjectLabel="Creature"
             // No thumbnails: with only 16 creatures the suggestion list would show the
             // answer's art in full, a couple of keystrokes from the blurred plate.
