@@ -14,7 +14,6 @@
   --text-dim: #7b7364;
   --brass: #9c854f;
   --brass-bright: #c8ad6d;
-  --blood: #8c3327;
 
   --hit: #41582c;
   --hit-line: #6a8a45;
@@ -348,13 +347,6 @@ a:hover {
   line-height: 1.1;
 }
 
-.victory__icon.icon-missing {
-  width: 190px;
-  height: 90px;
-  max-width: 90%;
-  font-size: 0.8rem;
-}
-
 .combobox__empty {
   padding: 0.6rem 0.7rem;
   color: var(--text-dim);
@@ -665,22 +657,6 @@ a:hover {
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.55), inset 0 0 60px rgba(140, 51, 39, 0.07);
 }
 
-.victory__eyebrow {
-  margin: 0;
-  font-size: 0.72rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--brass);
-}
-
-/* Capped on both axes so a 1:1 tool icon doesn't blow up to 280px square. */
-.victory__icon {
-  width: auto;
-  max-width: min(280px, 90%);
-  max-height: 110px;
-  object-fit: contain;
-  margin: 0.6rem 0 0.2rem;
-}
 
 .victory__name {
   font-family: var(--display);
