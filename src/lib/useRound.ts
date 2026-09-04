@@ -19,6 +19,26 @@ interface Round<T> {
   guesses: T[]
   endlessAnswer: T | null
   gaveUp: boolean
+  /** Ids already served in this endless run, so it doesn't repeat itself. */
+  seen: string[]
+}
+
+/**
+ * Pick the next endless subject, avoiding anything already served in this run. Plain
+ * random repeats far too readily to be pleasant — with sixteen creatures you'd expect a
+ * repeat within a handful of rounds. Once the pool is exhausted it starts a fresh cycle,
+ * still refusing to hand back the subject just played.
+ */
+function nextFromPool<T extends Guessable>(pool: T[], seen: string[], justPlayed?: string) {
+  const spent = new Set(seen)
+  const unseen = pool.filter((item) => !spent.has(item.id))
+  if (unseen.length > 0) {
+    const pick = pickRandom(unseen)
+    return { pick, seen: [...seen, pick.id] }
+  }
+  const fresh = pool.filter((item) => item.id !== justPlayed)
+  const pick = pickRandom(fresh.length > 0 ? fresh : pool)
+  return { pick, seen: [pick.id] }
 }
 
 /**
@@ -42,17 +62,21 @@ export function useRound<T extends Guessable>({
   const byId = useMemo(() => new Map(pool.map((item) => [item.id, item])), [pool])
   const daily = useMemo(() => pickOfTheDay(dayKey, pool, salt), [dayKey, pool, salt])
 
-  const startRound = (forMode: Mode): Round<T> => ({
-    key: `${forMode}:${dayKey}`,
-    guesses:
-      forMode === 'daily'
-        ? loadProgress(storageKey, dayKey)
-            .guesses.map((id) => byId.get(id))
-            .filter((x): x is T => Boolean(x))
-        : [],
-    endlessAnswer: forMode === 'endless' ? pickRandom(pool) : null,
-    gaveUp: false,
-  })
+  const startRound = (forMode: Mode): Round<T> => {
+    const opened = forMode === 'endless' ? nextFromPool(pool, []) : null
+    return {
+      key: `${forMode}:${dayKey}`,
+      guesses:
+        forMode === 'daily'
+          ? loadProgress(storageKey, dayKey)
+              .guesses.map((id) => byId.get(id))
+              .filter((x): x is T => Boolean(x))
+          : [],
+      endlessAnswer: opened?.pick ?? null,
+      gaveUp: false,
+      seen: opened?.seen ?? [],
+    }
+  }
 
   const [round, setRound] = useState<Round<T>>(() => startRound(mode))
 
@@ -97,7 +121,11 @@ export function useRound<T extends Guessable>({
   const giveUp = useCallback(() => setRound((r) => ({ ...r, gaveUp: true })), [])
 
   const nextEndless = useCallback(
-    () => setRound((r) => ({ ...r, guesses: [], gaveUp: false, endlessAnswer: pickRandom(pool) })),
+    () =>
+      setRound((r) => {
+        const { pick, seen } = nextFromPool(pool, r.seen, r.endlessAnswer?.id)
+        return { ...r, guesses: [], gaveUp: false, endlessAnswer: pick, seen }
+      }),
     [pool],
   )
 
