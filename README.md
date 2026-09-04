@@ -9,10 +9,10 @@ own progress and streak:
 | Game | What you get | Pool |
 | --- | --- | --- |
 | **Weapon** | Graded attribute grid: class, ammo, action, slots, magazine, damage, cost | 157 |
-| **Trait** | Graded attribute grid: cost, category, type | 85 |
+| **Trait** | Graded attribute grid: cost, rank, category, type | 75 |
 | **Hunter quote** | Lore blurb with the hunter's own name blacked out | 195 |
 | **Hunter art** | Blurred greyscale portrait | 192 |
-| **Trait icon** | Blurred greyscale trait banner | 85 |
+| **Trait icon** | Blurred greyscale trait banner | 75 |
 | **Bestiary** | Blurred greyscale monster or boss art | 16 |
 
 The three blur rounds start at a heavy blur in greyscale; each wrong guess clears a step
@@ -80,20 +80,33 @@ and streaks live in `localStorage`.
 
 ## The dataset
 
+The scrapers have **no npm scripts on purpose** — they hit the wiki and overwrite
+everything under `public/`, including art that has been replaced by hand, so running one
+should be a deliberate act rather than a convenient one. Invoke them directly:
+
 ```bash
-npm run data     # scrape the wiki, then rebuild src/data/weapons.json
-npm run hunters  # scrape hunters into src/data/hunters.json + public/hunters/
-npm run extras   # scrape traits + bestiary into src/data/{traits,bestiary}.json
+node scripts/scrape-wiki.mjs      # weapons -> src/data/weapons.raw.json + public/weapons/
+node scripts/build-dataset.mjs    # weapons.raw.json -> weapons.json (local, no network)
+node scripts/scrape-hunters.mjs   # hunters -> src/data/hunters.json + public/hunters/
+node scripts/scrape-extras.mjs    # traits + bestiary -> src/data/, public/traits/, public/bestiary/
 ```
+
+`build-dataset.mjs` is the safe one: it only re-reads the existing scrape and rewrites
+`weapons.json`, so it's what to run after editing `SCARCE_SELL_PRICE` or the class and
+action tables. The other three download.
+
+**Before scraping, check `git status` afterwards.** Several creature images in
+`public/bestiary/` were replaced by hand because the wiki's were poor; a re-scrape
+silently reverts them to whatever `pickArt()` picks. If that happens, restore with
+`git checkout -- public/bestiary/`.
 
 ### Traits and bestiary
 
-**85 traits** from `Category:Traits`, via `{{Infobox Trait}}` — Cost (upgrade points),
-Unlock (bloodline rank), Category and Type, plus the 512px banner art the page body uses
-rather than the small infobox icon. 25 traits have no cost, being event or pact traits
-you can't buy; those compare as unknown. Type combinations are written inconsistently on
-the wiki ("Burn,Scarce", "Scarce, Event"), so they're canonicalised to a sorted
-` / `-joined string — 7 distinct values.
+**85 trait pages** from `Category:Traits`, via `{{Infobox Trait}}` — Cost (upgrade
+points), Unlock (bloodline rank), Category and Type, plus the 512px banner art the page
+body uses rather than the small infobox icon. Type combinations are written
+inconsistently on the wiki ("Burn,Scarce", "Scarce, Event"), so they're canonicalised to
+a sorted ` / `-joined string — 7 distinct values.
 
 Traits carry two images and they do different jobs: the infobox's crisp 64px `Small`
 icon for lists and guess rows, and the page body's 512px `Big` banner for the blur round.
@@ -111,11 +124,23 @@ the in-game bestiary plate `Lore <Name> Mastery.png` (~368×560 of just the crea
 only wide art; Ursa Mortis has only teasers and wallpapers. Those four get centre-cropped
 in the 2:3 frame, which still lands on the creature.
 
-Only Cost/Category/Type are compared for traits; Unlock rank is in the data if a fourth
-column is ever wanted. Event and pact traits can't be bought, so the wiki records no cost
-for them — they're stored as **0** rather than as unknown. That keeps all 85 traits on
-one scale, so every guess gets a ▲/▼; treating them as unknown gave no direction at all,
-and on the ~29% of days one was the answer, no guess did. 34 of 85 traits are free.
+**10 traits have been removed from the game** and are excluded from play. The wiki keeps
+their pages in `Category:Traits` with nothing on the infobox to say so — the only signal
+is an update history line ("Tomahawk removed from the game"), plus blank Cost and Unlock
+fields. Blankness alone is not enough to filter on: event and pact traits are blank too
+and are very much still in the game, so the scraper matches on the history text. That
+leaves 75 playable.
+
+Event and pact traits can't be bought, so the wiki records no cost for them — they're
+stored as **0** rather than as unknown, which keeps every trait on one scale so every
+guess gets a ▲/▼.
+
+The board compares Cost, **Rank**, Category and Type. These attributes do not identify a
+trait uniquely and can't be made to: 30 of 75 traits (40%) still share their whole
+combination with another, because 24 of them have no cost *or* unlock rank on the wiki
+and collapse together. Rank is what makes it bearable — without it the figure is 74%.
+When an all-green guess isn't the answer, the board says so outright rather than looking
+broken.
 
 ### Hunters
 

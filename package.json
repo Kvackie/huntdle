@@ -7,10 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -b --noEmit",
-    "data": "node scripts/scrape-wiki.mjs && node scripts/build-dataset.mjs",
-    "hunters": "node scripts/scrape-hunters.mjs",
-    "extras": "node scripts/scrape-extras.mjs"
+    "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {
     "react": "^19.1.0",
