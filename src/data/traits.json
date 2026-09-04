@@ -17,8 +17,8 @@
       "removed": false,
       "imageSmall": "Trait Acolyte Small.png",
       "imageBanner": "Trait Acolyte Big.png",
-      "icon": "traits/beec83015d32fba5655a.png",
-      "banner": "traits/9f3aa2b9f44e2aa8e15c.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "adrenaline",
@@ -53,8 +53,8 @@
       "removed": true,
       "imageSmall": "Trait All Ears Small.png",
       "imageBanner": "Trait All Ears Big.png",
-      "icon": "traits/dda8d8e973372745d445.png",
-      "banner": "traits/28b4f9fe67298640243f.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "ambidextrous",
@@ -161,8 +161,8 @@
       "removed": false,
       "imageSmall": "Trait Blademancer Small.png",
       "imageBanner": "Trait Blademancer Big.png",
-      "icon": "traits/9cc4d436a70463918a4f.png",
-      "banner": "traits/660a05cdfdd548e444ee.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "blast-sense",
@@ -197,8 +197,8 @@
       "removed": false,
       "imageSmall": "Trait Fire Eater Small.png",
       "imageBanner": "Trait Fire Eater Big.png",
-      "icon": "traits/4957a7cffbce8429d8cc.png",
-      "banner": "traits/a510a7b604b7ed0afee9.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "bloodless",
@@ -251,8 +251,8 @@
       "removed": false,
       "imageSmall": "Trait Bruiser Small.png",
       "imageBanner": "Trait Bruiser Big.png",
-      "icon": "traits/a5965b9db6eb5c4051a0.png",
-      "banner": "traits/4dd92f4dd27566ac2599.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "bulletgrubber",
@@ -323,8 +323,8 @@
       "removed": false,
       "imageSmall": "Trait Communion Small.png",
       "imageBanner": "Trait Communion Big.png",
-      "icon": "traits/780018791c58f6eecca0.png",
-      "banner": "traits/885a89506d31cdcfdd1e.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "conduit",
@@ -359,8 +359,8 @@
       "removed": false,
       "imageSmall": "Trait Corpse Seer Small.png",
       "imageBanner": "Trait Corpse Seer Big.png",
-      "icon": "traits/f826d8380cc1e952bc4a.png",
-      "banner": "traits/d7658ce4cfec1eeb2beb.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "crack-shot",
@@ -377,8 +377,8 @@
       "removed": false,
       "imageSmall": "Trait Crack Shot Small.png",
       "imageBanner": "Trait Crack Shot Big.png",
-      "icon": "traits/75050da92558f6dd0031.png",
-      "banner": "traits/c9e5945c62158998489e.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "dauntless",
@@ -413,8 +413,8 @@
       "removed": true,
       "imageSmall": "Trait Deadeye Scopesmith Small.png",
       "imageBanner": "Trait Deadeye Scopesmith Big.png",
-      "icon": "traits/d9ad282abdf2d1970556.png",
-      "banner": "traits/dd406439ce48b4e8fe4a.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "death-cheat",
@@ -485,8 +485,8 @@
       "removed": true,
       "imageSmall": "Trait Dewclaw Small.png",
       "imageBanner": "Trait Dewclaw Big.png",
-      "icon": "traits/748dc866f563110d50b8.png",
-      "banner": "traits/b704192a2aec36a1d1a0.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "doctor",
@@ -557,8 +557,8 @@
       "removed": false,
       "imageSmall": "Trait Final Gasp Small.png",
       "imageBanner": "Trait Final Gasp Big.png",
-      "icon": "traits/81ce1ea46cf4a0523b45.png",
-      "banner": "traits/6a25a2d2a90fd743f9da.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "fire-eater",
@@ -575,8 +575,8 @@
       "removed": false,
       "imageSmall": "Trait Fire Eater Small.png",
       "imageBanner": "Trait Fire Eater Big.png",
-      "icon": "traits/32b948b7875834f7ed80.png",
-      "banner": "traits/319a704229cf92b238c1.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "flame-touched",
@@ -593,8 +593,8 @@
       "removed": false,
       "imageSmall": "Trait Flame Touched Small.png",
       "imageBanner": "Trait Flame Touched Big.png",
-      "icon": "traits/c2d033b03e8a26c6ad9a.png",
-      "banner": "traits/6d6b3357dfcdcaf72ecd.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "frontiersman",
@@ -683,8 +683,8 @@
       "removed": false,
       "imageSmall": "Trait Gunrunner Small.png",
       "imageBanner": "Trait Gunrunner Big.png",
-      "icon": "traits/f6ec3ddca28b9e082dcd.png",
-      "banner": "traits/7cf1d5e772a3ed8ca2b8.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "hornskin",
@@ -737,8 +737,8 @@
       "removed": false,
       "imageSmall": "Trait Indomitable Small.png",
       "imageBanner": "Trait Indomitable Big.png",
-      "icon": "traits/d7098231400a5b800386.png",
-      "banner": "traits/0735683b09e2101b0eef.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "instinct",
@@ -755,8 +755,8 @@
       "removed": false,
       "imageSmall": "Trait Instinct Small.png",
       "imageBanner": "Trait Instinct Big.png",
-      "icon": "traits/c3d916308ec09a913c03.png",
-      "banner": "traits/b5eeda01ea908a91849c.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "iron-devastator",
@@ -773,8 +773,8 @@
       "removed": true,
       "imageSmall": "Trait Iron Devastator Small.png",
       "imageBanner": "Trait Iron Devastator Big.png",
-      "icon": "traits/221e2e6c3ad06600d009.png",
-      "banner": "traits/b83ca6fe510b6a9affbe.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "iron-eye",
@@ -809,8 +809,8 @@
       "removed": true,
       "imageSmall": "Trait Iron Repeater Small.png",
       "imageBanner": "Trait Iron Repeater Big.png",
-      "icon": "traits/d87d763c5f56fc59fecf.png",
-      "banner": "traits/49cb6d82729780fcbe2d.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "iron-sharpshooter",
@@ -827,8 +827,8 @@
       "removed": true,
       "imageSmall": "Trait Iron Sharpshooter Small.png",
       "imageBanner": "Trait Iron Sharpshooter Big.png",
-      "icon": "traits/0d3f93686167791cb932.png",
-      "banner": "traits/31303234d488d7b237ba.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "kiteskin",
@@ -917,8 +917,8 @@
       "removed": false,
       "imageSmall": "Trait Mariner Small.png",
       "imageBanner": "Trait Mariner Big.png",
-      "icon": "traits/8071363906e0adcc687f.png",
-      "banner": "traits/b8dbe6757bcfcbaf8e25.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "marksman-scopesmith",
@@ -935,8 +935,8 @@
       "removed": true,
       "imageSmall": "Trait Marksman Scopesmith Small.png",
       "imageBanner": "Trait Marksman Scopesmith Big.png",
-      "icon": "traits/a62dc51d5dec15ca5721.png",
-      "banner": "traits/7cfece1f4d74d99c6eb0.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "martialist",
@@ -1043,8 +1043,8 @@
       "removed": false,
       "imageSmall": "Trait Peacekeeper Small.png",
       "imageBanner": "Trait Peacekeeper Big.png",
-      "icon": "traits/6fdae2381417e18a949b.png",
-      "banner": "traits/695564cd6342702d3b5c.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "physician",
@@ -1295,8 +1295,8 @@
       "removed": false,
       "imageSmall": "Trait Shadow Crush Small.png",
       "imageBanner": "Trait Shadow Crush Big.png",
-      "icon": "traits/17118ef6aafa0c742283.png",
-      "banner": "traits/6841d9f414f34b82675f.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "shadow-leap",
@@ -1331,8 +1331,8 @@
       "removed": false,
       "imageSmall": "Trait Signee Small.png",
       "imageBanner": "Trait Signee Big.png",
-      "icon": "traits/b04ec1fbc4720623cd4b.png",
-      "banner": "traits/5f441a3b759e35f4b58b.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "silent-killer",
@@ -1367,8 +1367,8 @@
       "removed": true,
       "imageSmall": "Trait Sniper Scopesmith Small.png",
       "imageBanner": "Trait Sniper Scopesmith Big.png",
-      "icon": "traits/2f87787420f65c0ac029.png",
-      "banner": "traits/e57091ec2890204346cd.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "steady-aim",
@@ -1403,8 +1403,8 @@
       "removed": true,
       "imageSmall": "Trait Steady Hand Small.png",
       "imageBanner": "Trait Steady Hand Big.png",
-      "icon": "traits/a5f86e60f3a54eed54c3.png",
-      "banner": "traits/50bdf1000ef01e1cbe86.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "surefoot",
@@ -1439,8 +1439,8 @@
       "removed": true,
       "imageSmall": "Trait Tomahawk Small.png",
       "imageBanner": "Trait Tomahawk Big.png",
-      "icon": "traits/8d2f3d40d23999e6a6df.png",
-      "banner": "traits/e90145e2bff56c693e10.png"
+      "icon": null,
+      "banner": null
     },
     {
       "id": "vigilant",

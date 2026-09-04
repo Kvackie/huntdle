@@ -9,10 +9,10 @@ progress and streak:
 | Game | What you get | Pool |
 | --- | --- | --- |
 | **Weapon** | Attribute grid: class, ammo, action, slots, magazine, damage, cost | 157 |
-| **Trait** | Attribute grid: cost, rank, category, type | 75 |
+| **Trait** | Attribute grid: cost, rank, category, type | 58 |
 | **Hunter quote** | Lore blurb with the hunter's own name blacked out | 195 |
 | **Hunter art** | Blurred greyscale portrait | 192 |
-| **Trait icon** | Blurred greyscale trait banner | 75 |
+| **Trait icon** | Blurred greyscale trait banner | 58 |
 | **Bestiary** | Blurred greyscale monster or boss art | 16 |
 
 `GridGame` backs the attribute boards and `RevealGame` the blur rounds, both
@@ -137,29 +137,39 @@ Three hunters have no portrait, because the file their page references was never
 uploaded: **Lynch** and **The Dark Friar** (only a `Wallpaper` image) and
 **Hell's Profiteer** (nothing at all). They play in the quote round, not the art round.
 
-### Traits — 75 playable of 85 pages
+### Traits — 58 playable of 85 pages
 
 **Ten traits have been removed from the game** and are excluded. The wiki keeps their
 pages in `Category:Traits` with nothing on the infobox to say so — the only signal is an
 update history line ("Tomahawk removed from the game") plus blank Cost and Unlock.
-Blankness alone is not a safe filter: 24 live event and pact traits are blank too, so the
-scraper matches the history text.
+Blankness alone is not a safe filter: the event and pact traits are blank too and are
+very much still in the game, so the scraper matches the history text instead.
 
-Those event and pact traits can't be bought, so the wiki records no cost. They're stored
-as **0** rather than unknown, keeping every trait on one scale so every guess gets an
-arrow.
+**Seventeen Event traits are also excluded.** They cost nothing and unlock at no rank,
+so they collapse onto a few `0/0` combinations — which is exactly where the attribute grid
+stops separating anything. Removing them takes the share of traits sharing a full
+combination from 38% down to 28%. It also settles the only two art collisions on the wiki,
+since both offenders were Event traits: the *Blazeborne* infobox points at *Fire Eater's*
+own files, so those two were byte-identical in icon and banner, and `Trait Instinct
+Big.png` is a second upload of *Berserker's* artwork. The scraper skips their downloads,
+so `prune` clears the files. A trait can carry several types at once, so `Burn / Event`
+counts as an Event trait.
 
-Cost, Rank, Category and Type **cannot** identify a trait uniquely: 30 of 75 still share
-their whole combination with another, because 24 have neither a cost nor a rank and
-collapse at `0/0` — the largest tie being eight Event traits. Rank is what makes it
-bearable; without it the figure is 74%. When an all-green guess isn't the answer, the
-board says "Close but not quite" rather than looking broken.
+The pact traits that remain can't be bought either, so the wiki records no cost for them.
+They're stored as **0** rather than unknown, keeping every trait on one scale so every
+guess gets an arrow.
+
+Cost, Rank, Category and Type still **cannot** identify a trait uniquely: 16 of 58 share
+their whole combination with another, because 8 have neither a cost nor a rank and
+collapse at `0/0` — the largest tie is four. Rank is what makes it bearable; without it
+the figure is 72%. When an all-green guess isn't the answer, the board says "Close but not
+quite" rather than looking broken.
 
 Each trait carries two images doing different jobs: the infobox's crisp 64px `Small` icon
 for lists and guess rows, and the page body's 512px `Big` banner for the blur round —
 shrinking the banner into a thumbnail reads as mush. Type combinations are written
 inconsistently ("Burn,Scarce", "Scarce, Event") and are canonicalised to a sorted
-slash-joined string, giving 7 distinct values.
+slash-joined string, giving 7 distinct values across the wiki and 4 in play.
 
 ### Bestiary — 16
 

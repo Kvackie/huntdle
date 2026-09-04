@@ -38,6 +38,17 @@ const ROOT = path.resolve(import.meta.dirname, '..')
 const TRAIT_RE = /\{\{Infobox Trait(?=\s*[|\r\n])/
 
 /**
+ * Event traits are out of play. They cost nothing, unlock at no rank and so collapse onto
+ * a handful of `0/0` combinations, which is where the attribute grid stops separating
+ * anything. Dropping them also settles the only two art collisions on the wiki, since
+ * both offenders were Event traits: the Blazeborne infobox points at Fire Eater's own
+ * files, and "Trait Instinct Big.png" is a second upload of Berserker's artwork.
+ *
+ * A trait can carry several types at once, so "Burn / Event" is an Event trait too.
+ */
+const isEvent = (type) => type.split(' / ').includes('Event')
+
+/**
  * A trait can carry several types, and the wiki writes them inconsistently — "Burn,Scarce",
  * "Scarce, Event". Canonicalise so the same combination always compares equal.
  */
@@ -108,8 +119,11 @@ async function scrapeTraits() {
       wikitext,
     )
 
+    const id = slugify(name)
+    const type = normaliseType(stripWikitext(f.Type))
+
     traits.push({
-      id: slugify(name),
+      id,
       name,
       page,
       wikiUrl: `https://huntshowdown.wiki.gg/wiki/${encodeURI(page.replace(/ /g, '_'))}`,
@@ -122,21 +136,27 @@ async function scrapeTraits() {
       unlock: Number.isFinite(unlock) ? unlock : 0,
       unlockLabel: String(Number.isFinite(unlock) ? unlock : 0),
       category: stripWikitext(f.Category) || 'Unknown',
-      type: normaliseType(stripWikitext(f.Type)),
+      type,
       description: stripWikitext(
         wikitext.match(/\}\}\s*\n+\[\[File:[^\]]*\]\]\s*\n+([^\n=]{20,})/)?.[1] ?? '',
       ),
       removed,
       imageSmall: (f.image ?? '').trim() || null,
       imageBanner: banner,
+      // Filled in by fetchImages; dropped traits keep the nulls.
+      icon: null,
+      banner: null,
     })
   }
 
   traits.sort((a, b) => a.name.localeCompare(b.name))
   const dir = path.join(ROOT, 'public', 'traits')
+  // Only traits in play get art. Nothing else is ever rendered, so downloading it just
+  // ships dead weight; prune clears whatever an earlier scrape left behind.
+  const art = traits.filter((t) => !t.removed && !isEvent(t.type))
   const keep = new Set([
-    ...(await fetchImages(traits, dir, 'traits', { from: 'imageSmall', to: 'icon' })),
-    ...(await fetchImages(traits, dir, 'traits', {
+    ...(await fetchImages(art, dir, 'traits', { from: 'imageSmall', to: 'icon' })),
+    ...(await fetchImages(art, dir, 'traits', {
       from: 'imageBanner',
       to: 'banner',
       suffix: '-banner',
@@ -239,6 +259,9 @@ async function main() {
   console.log(`  free (event/pact traits): ${traits.filter((t) => t.cost === 0 && !t.removed).length}`)
   console.log(`  removed from the game (excluded from play): ${gone.length}`)
   if (gone.length) console.log(`      ${gone.map((t) => t.name).join(', ')}`)
+  const events = traits.filter((t) => isEvent(t.type) && !t.removed)
+  console.log(`  event traits (excluded from play): ${events.length}`)
+  console.log(`  in play (the only ones with art): ${traits.length - gone.length - events.length}`)
 
   console.log('Bestiary…')
   const bestiary = await scrapeBestiary()

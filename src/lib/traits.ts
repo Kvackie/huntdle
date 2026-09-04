@@ -27,13 +27,21 @@ export interface Trait {
 
 const data = dataset as unknown as { scrapedAt: string; traits: Trait[] }
 
-/** Only traits still in the game are guessable. */
-export const TRAITS: Trait[] = data.traits.filter((t) => !t.removed)
+/** A trait can carry several types at once, so "Burn / Event" counts as an Event trait. */
+const isEvent = (t: Trait) => t.type.split(' / ').includes('Event')
+
+/**
+ * Traits still in the game, minus the Event ones. Event traits cost nothing and unlock at
+ * no rank, so they pile onto a few `0/0` combinations the grid can't separate — and the
+ * two traits whose wiki art belonged to another trait were both Event traits, so this
+ * clears the icon round's only unwinnable pairs as well.
+ */
+export const TRAITS: Trait[] = data.traits.filter((t) => !t.removed && !isEvent(t))
 export const TRAITS_WITH_BANNER: Trait[] = TRAITS.filter((t) => Boolean(t.banner))
 
 /**
- * Cost, Category and Type alone leave most traits indistinguishable — they share a
- * combination with several others. Unlock rank roughly halves that.
+ * Cost, Category and Type alone leave most traits indistinguishable: 72% share a
+ * combination with something else. Unlock rank brings that down to 28%.
  */
 export const TRAIT_COLUMNS: Column<Trait>[] = [
   { key: 'cost', label: 'Cost', kind: 'number', value: (t) => t.cost, format: (t) => t.costLabel },
