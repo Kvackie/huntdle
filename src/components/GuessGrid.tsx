@@ -52,6 +52,9 @@ export function GuessGrid<T extends Guessable>({
                 <div
                   key={cell.key}
                   className={`cell cell--${cell.verdict}`}
+                  // Mobile stacks each guess into a card with no header row, so every
+                  // cell has to name its own column. CSS reveals this below 640px.
+                  data-label={columns[i].label}
                   // Only the newest row animates; older rows are already revealed.
                   style={{ animationDelay: row === 0 ? `${i * 120}ms` : '0ms' }}
                 >

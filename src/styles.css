@@ -762,11 +762,188 @@ a:hover {
   margin: 0;
 }
 
+/* ------------------------------------------------ mobile + tablet (portrait) */
+
+/*
+ * Card layout. The board needs --content (1140px) plus the app's 2rem padding to lay
+ * out as a table, so below ~1172px a seven-column table either scrolls sideways or
+ * squeezes each
+ * column to nothing. So every guess becomes a self-contained card instead: the subject
+ * on top, its attributes packed underneath in the same box. No horizontal scrolling at
+ * any size, and it covers phones and tablets in portrait alike.
+ */
+@media (max-width: 1180px) {
+  .grid-scroll {
+    overflow-x: visible;
+    padding-bottom: 0;
+  }
+
+  .grid {
+    min-width: 0;
+    gap: 10px;
+  }
+
+  /* The headings belong to a table; on a card each cell names itself. */
+  .grid__head {
+    display: none;
+  }
+
+  .grid__row {
+    /* auto-fit rather than a fixed count: a phone card fits four across, a tablet card
+       fits all seven on one line, with no separate breakpoint for each. */
+    grid-template-columns: repeat(auto-fit, minmax(78px, 1fr));
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--line);
+    background: rgba(12, 11, 9, 0.5);
+  }
+
+  .cell--weapon {
+    /* Full-width header of the card. */
+    grid-column: 1 / -1;
+    gap: 0.6rem;
+    padding: 0.1rem 0.2rem 0.35rem;
+    border: 0;
+    background: transparent;
+    animation: none;
+  }
+
+  .cell {
+    position: relative;
+    /* Room for the floating label; value and arrow keep sharing one line. */
+    padding: 0.95rem 0.15rem 0.25rem;
+  }
+
+  /* The column name, since there's no header row on a card. */
+  .cell[data-label]::before {
+    content: attr(data-label);
+    position: absolute;
+    top: 0.3rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.72;
+    line-height: 1;
+  }
+}
+
+/* ------------------------------------------------------------ phones only */
+
+/* The card layout above already applies; this only tightens the sizing for a hand. */
 @media (max-width: 640px) {
   .app {
-    padding: 1.25rem 0.6rem 2rem;
+    padding: 1rem 0.5rem 2rem;
   }
+
+  .header__title {
+    letter-spacing: 0.03em;
+  }
+
+  .header__tagline {
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.7rem;
+    letter-spacing: 0.14em;
+    font-size: 0.7rem;
+  }
+
+  /* Six game tabs need to wrap without becoming a wall of text. */
+  .tabs {
+    gap: 0.3rem;
+  }
+
+  .tabs__tab {
+    font-size: 0.74rem;
+    padding: 0.45rem 0.7rem;
+    letter-spacing: 0.05em;
+  }
+
+  .tabs--sub .tabs__tab {
+    font-size: 0.68rem;
+    padding: 0.4rem 0.65rem;
+  }
+
+  .cell {
+    min-height: 48px;
+  }
+
+  .cell[data-label]::before {
+    font-size: 0.55rem;
+  }
+
   .cell__icon {
+    height: 40px;
+    max-width: 96px;
+  }
+
+  .cell__name {
+    font-size: 0.95rem;
+  }
+
+  .cell__value {
+    font-size: 0.85rem;
+    line-height: 1.1;
+  }
+
+  .cell__arrow {
+    font-size: 0.7rem;
+  }
+
+  .combobox {
+    margin-bottom: 1.25rem;
+  }
+
+  .combobox__input {
+    font-size: 1rem;
+    padding: 0.7rem 0.75rem;
+  }
+
+  /* Comfortable tap targets in the suggestion list. */
+  .combobox__option {
+    padding: 0.45rem 0.4rem;
+    gap: 0.55rem;
+  }
+
+  .combobox__icon {
+    height: 36px;
     max-width: 88px;
+  }
+
+  .combobox__thumb {
+    width: 48px;
+    height: 48px;
+  }
+
+  .quote {
+    padding: 1rem 0.9rem;
+  }
+
+  .quote__text {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .attempts {
+    gap: 6px;
+  }
+
+  .attempts__name {
+    font-size: 0.8rem;
+    padding: 1rem 0.4rem 0.35rem;
+  }
+
+  .victory {
+    padding: 1.1rem 0.8rem;
+  }
+
+  .victory__name {
+    font-size: 1.2rem;
+  }
+
+  .help,
+  .footer {
+    font-size: 0.85rem;
   }
 }
