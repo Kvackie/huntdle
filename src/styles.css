@@ -1,0 +1,772 @@
+﻿/*
+ * Hunt's register: near-black ground, aged-bone type, dull brass and oxblood for
+ * accents, hard square edges, and a wood-type display face. No bright gold — the game's
+ * palette is muddy and desaturated, and colour is used sparingly.
+ */
+:root {
+  --bg: #0a0908;
+  /* Slightly translucent so the backdrop reads through panels, as the wiki does. */
+  --surface: rgba(18, 16, 14, 0.88);
+  --surface-2: rgba(26, 23, 20, 0.97);
+  --line: #2b2721;
+  --line-bright: #463f36;
+  --text: #c7bda7;
+  --text-dim: #7b7364;
+  --brass: #9c854f;
+  --brass-bright: #c8ad6d;
+  --blood: #8c3327;
+
+  --hit: #41582c;
+  --hit-line: #6a8a45;
+  --miss: #4d2019;
+  --miss-line: #833428;
+
+  --display: 'Alfa Slab One', Rockwell, 'Times New Roman', serif;
+  --body: 'Barlow Condensed', 'Segoe UI', system-ui, sans-serif;
+
+  /* One content width shared by the guess bar, the grid, the guess rows and every
+     panel, so nothing steps in or out relative to anything else. */
+  --content: 1140px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  /* The wiki's own smoky pine backdrop, laid out the way the wiki lays it out
+     (cover, top centre, fixed) under a scrim that keeps the fog from washing out text. */
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(rgba(12, 11, 9, 0.4), rgba(12, 11, 9, 0.78)),
+    url('./assets/site-background.jpg');
+  background-position: center, top center;
+  background-size: cover, cover;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: fixed, fixed;
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/*
+ * Film grain. Hunt's whole presentation sits under a layer of dirt; a little static
+ * over the flat CSS panels stops them reading as clean web boxes.
+ */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+a {
+  color: var(--brass);
+}
+a:hover {
+  color: var(--brass-bright);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.app {
+  max-width: calc(var(--content) + 2rem);
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+}
+
+/* ------------------------------------------------------------------ header */
+
+.header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Alfa Slab One ships a single weight — asking for 700 only fakes it badly. */
+.header__title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.1rem, 7vw, 3.1rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--text);
+  text-shadow: 0 2px 0 #000, 0 0 26px rgba(0, 0, 0, 0.9);
+}
+
+.header__tagline {
+  margin: 0.35rem auto 1.2rem;
+  padding-bottom: 0.9rem;
+  max-width: 30rem;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 0.76rem;
+  /* A hairline of brass, the way Hunt rules off a panel header. */
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 1px 0 rgba(156, 133, 79, 0.18);
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.tabs--sub {
+  margin-top: 0.45rem;
+}
+
+.tabs--sub .tabs__tab {
+  font-size: 0.74rem;
+  padding: 0.25rem 0.8rem;
+}
+
+.tabs__tab {
+  font: inherit;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.95rem;
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.tabs__tab:hover {
+  color: var(--text);
+  border-color: var(--line-bright);
+}
+
+.tabs__tab.is-active {
+  color: #100e0a;
+  background: var(--brass);
+  border-color: var(--brass);
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------------- help */
+
+.help {
+  max-width: var(--content);
+  margin: 0 auto 1.5rem;
+  padding: 0.85rem 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  font-size: 0.95rem;
+}
+
+.help p {
+  margin: 0 0 0.6rem;
+}
+.help p:last-child {
+  margin-bottom: 0;
+}
+
+.help__source {
+  color: var(--text-dim);
+  font-size: 0.88rem;
+}
+
+.k {
+  padding: 0 0.28em;
+  border-radius: 0;
+  color: #f0e8d8;
+}
+.k--hit {
+  background: var(--hit);
+}
+.k--miss {
+  background: var(--miss);
+}
+
+.status {
+  text-align: center;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  margin: 0 0 0.9rem;
+}
+
+/* ---------------------------------------------------------------- combobox */
+
+.combobox {
+  position: relative;
+  /* Explicit width, because `margin: 0 auto` beats `align-items: stretch` inside the
+     hunter rounds' flex column and would otherwise collapse this to the input's
+     intrinsic ~200px. The cap keeps the bar narrower than the boards it sits above. */
+  width: 100%;
+  max-width: 34rem;
+  margin: 0 auto 1.75rem;
+}
+
+.combobox__input {
+  width: 100%;
+  font: inherit;
+  font-size: 1.05rem;
+  padding: 0.65rem 0.9rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line-bright);
+  border-radius: 0;
+  outline: none;
+}
+
+.combobox__input::placeholder {
+  color: var(--text-dim);
+}
+
+.combobox__input:focus {
+  border-color: var(--brass);
+  box-shadow: 0 0 0 3px rgba(156, 133, 79, 0.18);
+}
+
+.combobox__list {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 20rem;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.25rem;
+  list-style: none;
+  background: var(--surface-2);
+  border: 1px solid var(--line-bright);
+  border-radius: 0;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6);
+}
+
+.combobox__option {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.3rem 0.5rem;
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.combobox__option.is-active {
+  background: rgba(156, 133, 79, 0.2);
+  box-shadow: inset 2px 0 0 var(--brass);
+}
+
+/*
+ * Wiki icons come in three aspect ratios: 4:1 for long guns, 2:1 for melee weapons,
+ * 1:1 for tools and world pickups. Sizing by height and letting width follow keeps a
+ * square icon from reserving a long gun's worth of empty space next to the name.
+ */
+.combobox__icon {
+  height: 46px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+  flex: none;
+}
+
+/*
+ * Hunter thumbnails. The art is a full body on transparency, so shown whole at this
+ * size the face is unreadable — the frame crops to the head instead, over a solid
+ * ground so the cut-out figure has something to sit on.
+ */
+.combobox__thumb {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  background: #0d0c0a;
+  border: 1px solid var(--line);
+}
+
+.combobox__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(2.2);
+  transform-origin: 50% 20%;
+}
+
+.combobox__thumb.icon-missing {
+  width: 64px;
+  height: 64px;
+}
+
+.combobox__name {
+  flex: 1;
+  min-width: 0;
+  /* Anything still too long truncates rather than wrapping the row to two lines. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*
+ * Stand-in for a weapon the wiki has no art for yet. It's a <span>, so unlike the
+ * <img> rules above it needs an explicit width — auto would size it to its own label.
+ */
+.icon-missing {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  padding: 0 0.2rem;
+  border: 1px dashed var(--line-bright);
+  border-radius: 0;
+  color: var(--text-dim);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.victory__icon.icon-missing {
+  width: 190px;
+  height: 90px;
+  max-width: 90%;
+  font-size: 0.8rem;
+}
+
+.combobox__empty {
+  padding: 0.6rem 0.7rem;
+  color: var(--text-dim);
+}
+
+/* -------------------------------------------------------------------- grid */
+
+.grid-scroll {
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.grid {
+  /* Wide enough that even "Centennial Shorty Silencer" sits on one line beside a
+     full-size icon. */
+  --weapon-col: minmax(360px, 1.6fr);
+  min-width: var(--content);
+  display: grid;
+  gap: 6px;
+}
+
+.grid__head,
+.grid__row {
+  display: grid;
+  grid-template-columns: var(--weapon-col) repeat(var(--columns), minmax(84px, 1fr));
+  gap: 6px;
+}
+
+.grid__heading {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-align: center;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.grid__heading:first-child {
+  text-align: left;
+  padding-left: 0.5rem;
+}
+
+.cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  min-height: 82px;
+  padding: 0.35rem;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--surface);
+  animation: flip 0.45s ease both;
+}
+
+@keyframes flip {
+  from {
+    transform: rotateX(-90deg);
+    opacity: 0;
+  }
+  to {
+    transform: rotateX(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell {
+    animation: none;
+  }
+}
+
+.cell--weapon {
+  justify-content: flex-start;
+  gap: 0.6rem;
+  padding-left: 0.5rem;
+  animation-delay: 0ms !important;
+}
+
+/* Height-driven, like .combobox__icon — see the note there. */
+.cell__icon {
+  height: 58px;
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
+  flex: none;
+}
+
+.cell__name {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.95rem;
+  line-height: 1.15;
+  text-align: left;
+  /* Break between words only — never split "Springfield" across two lines. */
+  overflow-wrap: normal;
+  hyphens: none;
+}
+
+.cell__value {
+  font-size: 1rem;
+  font-weight: 500;
+  /* The grid scrolls horizontally, so a value never needs to wrap to fit. */
+  white-space: nowrap;
+}
+
+.cell__arrow {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.cell--hit {
+  background: var(--hit);
+  border-color: var(--hit-line);
+  color: #f2ecdd;
+}
+.cell--miss {
+  background: var(--miss);
+  border-color: var(--miss-line);
+  color: #e7d9d3;
+}
+
+/* ------------------------------------------------------------ hunter rounds */
+
+/*
+ * Stretch, not center: as a centering flex column this collapsed each child to its
+ * content width, so the guess bar ignored --content and came out ~200px. Children that
+ * genuinely want to be their own size opt out with align-self.
+ */
+.hunter {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.hunter > .giveup,
+.hunter > .portrait {
+  align-self: center;
+}
+
+.quote {
+  width: 100%;
+  max-width: var(--content);
+  margin: 0 auto 1.5rem;
+  padding: 1.5rem 1.6rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--brass);
+}
+
+.quote__text {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.quote__hint {
+  margin-top: 0.9rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.portrait {
+  margin: 0 auto 1.5rem;
+}
+
+.portrait__frame {
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--line-bright);
+  background: #000;
+}
+
+/* Hunter art is 384x256 and reads well cropped square, tight on the figure. */
+.portrait__frame--portrait {
+  width: min(480px, 80vw);
+  aspect-ratio: 1;
+}
+
+/* Trait banners are 2:1 — a square crop would gut them. */
+.portrait__frame--wide {
+  width: min(620px, 90vw);
+  aspect-ratio: 16 / 9;
+}
+
+/* Bestiary plates are ~368x560. The four creatures with no plate fall back to wide art
+   and get centre-cropped, which still lands on the creature. */
+.portrait__frame--plate {
+  width: min(380px, 72vw);
+  aspect-ratio: 368 / 560;
+}
+
+/*
+ * A <canvas>, not an <img> — see ObscuredArt. The blur is drawn into the pixels, so
+ * there is no source to open in a new tab and no CSS filter to delete in devtools.
+ * That also removes the old flash risk: nothing here can paint before the blur exists.
+ */
+.portrait__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portrait__image {
+    transition: none;
+  }
+}
+
+.giveup {
+  margin-bottom: 1.25rem;
+  font-size: 0.76rem;
+  color: var(--text-dim);
+}
+
+/* Guesses as a grid of square portrait cards, four across. */
+.attempts {
+  list-style: none;
+  width: min(var(--content), 100%);
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.attempts__row {
+  position: relative;
+  display: block;
+  /* Portraits are 384x256, so a square card crops to the centre — where the face is. */
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--surface);
+  border: 2px solid var(--miss-line);
+  animation: flip 0.35s ease both;
+}
+
+.attempts__row.is-hit {
+  border-color: var(--hit-line);
+}
+
+.attempts__portrait {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The no-art placeholder is a span with its own fixed width; fill the card instead. */
+.attempts__portrait.icon-missing {
+  width: 100%;
+  height: 100%;
+}
+
+.attempts__name {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 1.4rem 0.55rem 0.45rem;
+  background: linear-gradient(rgba(10, 9, 8, 0), rgba(10, 9, 8, 0.92) 55%);
+  font-size: 0.92rem;
+  line-height: 1.15;
+}
+
+.attempts__mark {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  background: var(--miss-line);
+  color: #f2ecdd;
+  font-size: 0.95rem;
+}
+
+.attempts__row.is-hit .attempts__mark {
+  background: var(--hit-line);
+}
+
+@media (max-width: 760px) {
+  .attempts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ----------------------------------------------------------------- victory */
+
+.victory {
+  width: 100%;
+  max-width: var(--content);
+  margin: 0 auto 1.75rem;
+  padding: 1.4rem 1.2rem;
+  text-align: center;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--line-bright);
+  /* Bounty banner: brass rule above, blood glow within. */
+  border-top: 2px solid var(--brass);
+  border-radius: 0;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.55), inset 0 0 60px rgba(140, 51, 39, 0.07);
+}
+
+.victory__eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+/* Capped on both axes so a 1:1 tool icon doesn't blow up to 280px square. */
+.victory__icon {
+  width: auto;
+  max-width: min(280px, 90%);
+  max-height: 110px;
+  object-fit: contain;
+  margin: 0.6rem 0 0.2rem;
+}
+
+.victory__name {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0 0 0.35rem;
+  color: var(--text);
+  text-shadow: 0 2px 0 #000;
+}
+
+.victory__flavour {
+  margin: 0 auto 0.8rem;
+  max-width: 46ch;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+
+.victory__score {
+  margin: 0 0 1rem;
+}
+
+.victory__actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Standing on its own below the guess list in the quote round, not inside a panel. */
+.hunter > .victory__actions {
+  margin-top: 1.25rem;
+}
+
+.button {
+  font: inherit;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.1rem;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--line-bright);
+  border-radius: 0;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button:hover {
+  border-color: var(--brass);
+  color: var(--brass-bright);
+}
+
+.button--primary {
+  background: var(--brass);
+  border-color: var(--brass);
+  color: #100e0a;
+  font-weight: 600;
+}
+
+.button--primary:hover {
+  background: var(--brass-bright);
+  color: #100e0a;
+}
+
+/* ------------------------------------------------------------------ footer */
+
+.footer {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+}
+
+.footer p {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .app {
+    padding: 1.25rem 0.6rem 2rem;
+  }
+  .cell__icon {
+    max-width: 88px;
+  }
+}

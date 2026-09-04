@@ -1,0 +1,166 @@
+{
+  "scrapedAt": "2026-09-04T15:47:49.011Z",
+  "source": "https://huntshowdown.wiki.gg/api.php",
+  "bestiary": [
+    {
+      "id": "armored",
+      "name": "Armored",
+      "page": "Monsters/Armored",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Monsters/Armored",
+      "kind": "Monster",
+      "description": "Armoreds (or Armored Grunts as they were called in early stages of developement) are creatures covered in a wasp-nest-like protective shell and can be found around Compounds. Due to this shell they can withstand more damage before being killed - even a regular headshot is not enough.",
+      "image": "Lore Armored Mastery.png",
+      "art": "bestiary/e112f399b31648772291.png"
+    },
+    {
+      "id": "assassin",
+      "name": "Assassin",
+      "page": "Targets/Assassin",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Targets/Assassin",
+      "kind": "Boss",
+      "description": "The Assassin was the third Boss Target available in , added with Early Access 6.0.",
+      "image": "Lore Assassin Mastery.png",
+      "art": "bestiary/e86b2387e25f8679995a.png"
+    },
+    {
+      "id": "brute",
+      "name": "Brute",
+      "page": "Monsters/Brute",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Monsters/Brute",
+      "kind": "Monster",
+      "description": "The Brute is a bear-like creature that can be found in forest areas (up to four times per mission). It is similar to Ursa Mortis, which was first available during the Post Malone's Murder Circus. Contrary to Ursa Mortis, the Brute has only one head.",
+      "image": "Lore Brute Mastery.jpg",
+      "art": "bestiary/b0eda125c0bece939ced.jpg"
+    },
+    {
+      "id": "butcher",
+      "name": "Butcher",
+      "page": "Targets/Butcher",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Targets/Butcher",
+      "kind": "Boss",
+      "description": "The Butcher was one of the first two Boss Target available in .",
+      "image": "Lore Butcher Mastery.png",
+      "art": "bestiary/662b50c6a6b55f5b5e66.png"
+    },
+    {
+      "id": "firebreather",
+      "name": "Firebreather",
+      "page": "Monsters/Firebreather",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Monsters/Firebreather",
+      "kind": "Monster",
+      "description": "Firebreathers have an appearance similar to Grunts but with a glowing chest and they emit a distinct gasping sound. They can be found all over the world.",
+      "image": "Lore Firebreather Mastery.jpg",
+      "art": "bestiary/786b0c27e7301eb0d1c3.jpg"
+    },
+    {
+      "id": "grunt",
+      "name": "Grunt",
+      "page": "Monsters/Grunt",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Monsters/Grunt",
+      "kind": "Monster",
+      "description": "Grunts are the most common type of enemy found in the world of . They can be killed with any piece of equipment and sometimes they kill themselves by running into fire.",
+      "image": "Lore Grunt Mastery.png",
+      "art": "bestiary/1bea44861bb680bc7019.png"
+    },
+    {
+      "id": "hellborn",
+      "name": "Hellborn",
+      "page": "Targets/Hellborn",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Targets/Hellborn",
+      "kind": "Boss",
+      "description": "Hellborn is a giant Immolator. He attacks Hunters by throwing balls of fire at them rapidly burning away Health Chunks and making them vunerable for Monsters and enemy Hunters. Hellborn can be found at one of many predefiend spots around the map outside compounds. He drops a random Burn Trait upon death (except Necromancer).",
+      "image": "Hellborn.jpg",
+      "art": "bestiary/4e6531329e2b5bef7973.jpg"
+    },
+    {
+      "id": "hellhound",
+      "name": "Hellhound",
+      "page": "Monsters/Hellhound",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Monsters/Hellhound",
+      "kind": "Monster",
+      "description": "Hellhounds are bloodthirsty and rotten dogs which usually appear in packs of two or four. They can run really fast and bite Hunters causing heavy bleeding additional to the damage. Their jumping and movement makes it hard to shoot or stab them if they are alredy attacking the Hunter. S",
+      "image": "Lore Hellhound Mastery.png",
+      "art": "bestiary/5895eb087f7eea864b27.png"
+    },
+    {
+      "id": "hive",
+      "name": "Hive",
+      "page": "Monsters/Hive",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Monsters/Hive",
+      "kind": "Monster",
+      "description": "Hives are partly rotten creatures hanging of their own skeleton. They are moving very slow and don't attack players directly, instead they send out a poisonous swarm of bees which follows Hunters attracting their attention. Besides that, they emit high pitched screams, which can be picked up by enemies over some distance. The bees fly roughly at the speed of a running Hunter, which makes it possible to run away from them (and the Hive) until they are out of range from their mother and dissolve. If the player is too slow, the bees can be defeated by any melee attack, but if the hive doesn't get killed, she can send out a new swarm. This can be a dangerous situation if the player is poisoned and therefore cannot heal immediately and/or is out of stamina from the first swarm. The Hive's head hangs out from the side which makes it difficult to land headshots if she turns away from the player. Due to their nature of performing ranged attacks, Hive's are the only type of monster that can spawn on roofs, but they can be found everywhere else as well.",
+      "image": "Lore Hive Mastery.png",
+      "art": "bestiary/c0fc0cba51aa79c3a35b.png"
+    },
+    {
+      "id": "immolator",
+      "name": "Immolator",
+      "page": "Monsters/Immolator",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Monsters/Immolator",
+      "kind": "Monster",
+      "description": "Immolators are fiery humanoid monsters with high movement speed. Once aggravated, they will chase and attack hunters with quick slashes that cause normal damage. Immolators will ignite if they take \"sharp\" damage from bullets, bladed weapons or otherwise pointy sources. Blunt weapons will not cause them to ignite. Upon ignition, they will explode in a large fireball, instantly burning a small health chunk and igniting hunters. Once ignited, their attacks cause fire damage and the immolator will die after a few seconds. Choke clouds will cause damage to immolators and will extinguish them.",
+      "image": "Lore Immolator Mastery.png",
+      "art": "bestiary/6b8a7bc5310f8ec9307c.png"
+    },
+    {
+      "id": "meathead",
+      "name": "Meathead",
+      "page": "Monsters/Meathead",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Monsters/Meathead",
+      "kind": "Monster",
+      "description": "Meatheads are large and grotesque creatures, which are surrounded by their leeches. They roam around Compounds. Meatheads themselves are almost blind, but they can sense poison and attack poisoned Hunters (e.g. through bites of before mentioned leeches, which have limited sight and crawl after nearby Hunters). If the leeches get killed, the Meathead will spawn new ones. Upon death the Meathead drops a random Trait.",
+      "image": "Lore Meathead Mastery.png",
+      "art": "bestiary/52fcae2e41dc1f26e738.png"
+    },
+    {
+      "id": "rotjaw",
+      "name": "Rotjaw",
+      "page": "Targets/Rotjaw",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Targets/Rotjaw",
+      "kind": "Boss",
+      "description": "Rotjaw is a massive and dangerous alligator and was added to the game with the Tide of Shadows. She shoots electric traces, which take all Stamina from a Hunter if he comes in contact with them. Typical for her species, she lives by the water at one of many predefiend spots around the map outside compounds.",
+      "image": "Lore Rotjaw Mastery.png",
+      "art": "bestiary/18faa3b8c2f6afc6da4d.png"
+    },
+    {
+      "id": "scrapbeak",
+      "name": "Scrapbeak",
+      "page": "Targets/Scrapbeak",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Targets/Scrapbeak",
+      "kind": "Boss",
+      "description": "The Scrapbeak was the fourth Boss Target available in , added with the As the Crow Flies.",
+      "image": "Lore Scrapbeak Mastery.png",
+      "art": "bestiary/9fe3b71d45d0e54eb89e.png"
+    },
+    {
+      "id": "spider",
+      "name": "Spider",
+      "page": "Targets/Spider",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Targets/Spider",
+      "kind": "Boss",
+      "description": "The Spider was one of the first two Boss Target available in .",
+      "image": "Lore Spider Mastery.png",
+      "art": "bestiary/8cdd7bb52758d0cbe411.png"
+    },
+    {
+      "id": "ursa-mortis",
+      "name": "Ursa Mortis",
+      "page": "Monsters/Ursa Mortis",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Monsters/Ursa_Mortis",
+      "kind": "Monster",
+      "description": "Ursa Mortis is monstrous two-headed and four-armed bear. He is available during different Events and can be found at the Circus Event Compound or in the near vicinity of it, since he can leave the Circus if triggered by Hunters. Ursa Mortis is Latin, which translates to Bear of Death.",
+      "image": "Monster Ursa Mortis Teaser.jpg",
+      "art": "bestiary/fdc490dd29707b6fd43e.jpg"
+    },
+    {
+      "id": "water-devil",
+      "name": "Water Devil",
+      "page": "Monsters/Water Devil",
+      "wikiUrl": "https://huntshowdown.wiki.gg/wiki/Monsters/Water_Devil",
+      "kind": "Monster",
+      "description": "Water Devils are creatures looking like an accumulation of many eels. They can be spotted as a round disturbance in the water surface of rivers and lakes. When Hunters cross the water too close to them, they get triggered and start making bubbles. If the Hunters can't get out of the water quick enough, the Water Devils attack them really fast and cause heavy bleeding. They also make a loud squeaking noise, which can be picked up by nearby enemy Hunters. The best way to kill Water Devils is to shoot them; a single bullet with {{Ammo|Poison Ammo|nocategory",
+      "image": "Lore Water Devil Mastery.png",
+      "art": "bestiary/24d6be3844da3f829cb3.png"
+    }
+  ]
+}
