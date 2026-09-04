@@ -32,7 +32,13 @@ jobs:
       # `npm run build` is `tsc -b && vite build`, so CI typechecks before publishing.
       - run: npm run build
 
+      # enablement turns Pages on via the API if it isn't already, so a fresh repo
+      # doesn't need the Settings toggle flipped before the first run. It needs the
+      # pages: write permission above, and Pages to be available for the account —
+      # private repos on a free plan aren't, and there you must enable it by hand.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:

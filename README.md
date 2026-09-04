@@ -202,6 +202,36 @@ The obvious next modes, in LoLdle's shape: **hunter**, **boss/monster**, **tool 
 consumable**, plus icon-zoom and quote rounds. The grid and comparison engine are
 attribute-driven, so a new mode is mostly a new dataset plus a new `COLUMNS` list.
 
+## Licence
+
+Three different things live in this repo and they can't share one licence.
+
+| What | Licence |
+| --- | --- |
+| **Code** — `src/`, `scripts/`, config | MIT, see [`LICENSE`](LICENSE) |
+| **Data** — `src/data/*.json` | CC BY-SA 4.0, adapted from the wiki |
+| **Images** — `public/{weapons,hunters,traits,bestiary}/`, `src/assets/` | Crytek's, neither ours nor the wiki's to license |
+
+**Code is MIT.** The share-alike on the wiki text does not reach it: the app isn't a
+derivative of that prose, it just reads a file.
+
+**Data is CC BY-SA 4.0.** The datasets embed wiki text verbatim — weapon and trait
+descriptions, hunter lore captions, creature blurbs — so they inherit the
+[wiki's licence](https://creativecommons.org/licenses/by-sa/4.0/) and must keep the
+attribution and share-alike. The raw numbers (damage, slots, cost) are facts and aren't
+copyrightable on their own, but they sit in the same files as the prose. Values are
+reshaped rather than copied wholesale: see `scripts/build-dataset.mjs` for the
+normalisation, and `SCARCE_SELL_PRICE` for the four figures that aren't from the wiki.
+
+**Images are Crytek's.** This is the part no licence choice fixes. The wiki hosts the
+game art but cannot relicense someone else's intellectual property, so CC BY-SA doesn't
+apply to it and neither does MIT. They're included here on the same footing as any fan
+project: unofficial, non-commercial, and dependent on Crytek's tolerance of fan works.
+If you fork this and do anything commercial with it, that's the piece to think hard
+about — strip the art and point at the wiki's URLs instead.
+
+Before publishing, put your name in the `LICENSE` copyright line.
+
 ## Credits
 
 Weapon data, descriptions and images come from the

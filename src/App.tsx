@@ -195,11 +195,20 @@ export default function App() {
 
       <footer className="footer">
         <p>
-          Fan project. Data and images from the{' '}
+          Fan project. Text and data adapted from the{' '}
           <a href="https://huntshowdown.wiki.gg" target="_blank" rel="noreferrer noopener">
             Hunt: Showdown 1896 wiki
-          </a>{' '}
-          (CC BY-SA). Hunt: Showdown is a trademark of Crytek. Not affiliated with Crytek.
+          </a>
+          , used under{' '}
+          <a
+            href="https://creativecommons.org/licenses/by-sa/4.0/"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            CC BY-SA 4.0
+          </a>
+          . Game art and Hunt: Showdown are the property of Crytek; this project is
+          unofficial and not affiliated with Crytek.
         </p>
       </footer>
     </div>
