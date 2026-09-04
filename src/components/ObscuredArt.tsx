@@ -7,6 +7,12 @@ interface Props {
   /** True until the answer is out, when colour comes back. */
   obscured: boolean
   label: string
+  /**
+   * "cover" fills the frame and crops the overflow — right for art framed consistently,
+   * like the hunter portraits. "contain" fits the whole image inside instead, for a set
+   * whose aspect ratios vary and would otherwise lose heads or feet to the crop.
+   */
+  fit?: 'cover' | 'contain'
   className?: string
 }
 
@@ -26,7 +32,7 @@ const OVERSCALE = 1.14
  * can be found in the network panel. Closing that would mean shipping pre-blurred assets
  * and only serving the full-resolution art after a solve.
  */
-export function ObscuredArt({ src, blur, obscured, label, className }: Props) {
+export function ObscuredArt({ src, blur, obscured, label, fit = 'cover', className }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -51,9 +57,11 @@ export function ObscuredArt({ src, blur, obscured, label, className }: Props) {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.filter = `blur(${blur * dpr}px) grayscale(${obscured ? 1 : 0})`
 
-      // Cover-fit, matching object-fit: cover, then overscale for the blur bleed.
+      // Cover overscales so the blur has bleed to work with; contain must not, or it
+      // would crop the very edges it exists to preserve.
+      const ratios = [canvas.width / image.width, canvas.height / image.height]
       const scale =
-        Math.max(canvas.width / image.width, canvas.height / image.height) * OVERSCALE
+        fit === 'cover' ? Math.max(...ratios) * OVERSCALE : Math.min(...ratios)
       const w = image.width * scale
       const h = image.height * scale
       ctx.drawImage(image, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h)
@@ -63,7 +71,7 @@ export function ObscuredArt({ src, blur, obscured, label, className }: Props) {
     return () => {
       cancelled = true
     }
-  }, [src, blur, obscured])
+  }, [src, blur, obscured, fit])
 
   return <canvas ref={canvasRef} className={className} role="img" aria-label={label} />
 }

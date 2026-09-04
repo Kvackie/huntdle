@@ -18,6 +18,8 @@ interface Props<T extends Guessable> {
   wikiUrlOf: (item: T) => string
   /** How the revealed art is framed. */
   frame?: 'portrait' | 'wide' | 'plate'
+  /** Whether the art fills the frame (cropping) or fits inside it whole. */
+  fit?: 'cover' | 'contain'
   /**
    * Starting blur in pixels. Bold, simple art needs far more than a photo-like portrait
    * before it stops being recognisable at a glance.
@@ -40,6 +42,7 @@ export function RevealGame<T extends Guessable>({
   thumbOf = imageOf,
   wikiUrlOf,
   frame = 'portrait',
+  fit = 'cover',
   maxBlur = 16,
   subjectLabel,
   placeholder,
@@ -71,6 +74,7 @@ export function RevealGame<T extends Guessable>({
             src={imageOf(answer)}
             blur={blur}
             obscured={!revealed}
+            fit={fit}
             label={revealed ? answer.name : `Obscured ${subjectLabel.toLowerCase()}`}
             className="portrait__image"
           />
