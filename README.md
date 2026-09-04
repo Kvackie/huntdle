@@ -1,266 +1,213 @@
 # Huntdle
 
-A LoLdle-style daily guessing game for **Hunt: Showdown 1896**, built on real weapon
-data and icons pulled from the [official wiki](https://huntshowdown.wiki.gg).
+A LoLdle-style daily guessing game for **Hunt: Showdown 1896**, built on real data, art
+and icons pulled from the [official wiki](https://huntshowdown.wiki.gg).
 
-Six games, each with a daily puzzle and an endless practice mode, and each keeping its
-own progress and streak:
+Six games, each with a daily puzzle and an endless practice mode, each keeping its own
+progress and streak:
 
 | Game | What you get | Pool |
 | --- | --- | --- |
-| **Weapon** | Graded attribute grid: class, ammo, action, slots, magazine, damage, cost | 157 |
-| **Trait** | Graded attribute grid: cost, rank, category, type | 75 |
+| **Weapon** | Attribute grid: class, ammo, action, slots, magazine, damage, cost | 157 |
+| **Trait** | Attribute grid: cost, rank, category, type | 75 |
 | **Hunter quote** | Lore blurb with the hunter's own name blacked out | 195 |
 | **Hunter art** | Blurred greyscale portrait | 192 |
 | **Trait icon** | Blurred greyscale trait banner | 75 |
 | **Bestiary** | Blurred greyscale monster or boss art | 16 |
 
-The three blur rounds start at a heavy blur in greyscale; each wrong guess clears a step
-and the eighth clears it entirely. Colour returns only on reveal.
-
-### Not giving the answer away
-
-Two things leak an answer in a blur round, and both are handled:
-
-- **The element.** The art is drawn into a `<canvas>` with the blur baked into the pixels
-  (`ObscuredArt`), not shipped as an `<img>` with a CSS filter. An `<img>` can be opened
-  in a new tab, saved, or un-blurred by deleting one property in devtools; a canvas has
-  no source to open and only ever receives blurred pixels.
-- **The file name.** `krampus.png` in a network log answers the question by itself, so
-  art used in a guessing round is named by a hash of its id (`obfuscate()` in
-  `scripts/wiki.mjs`) — stable across scrapes, so re-running doesn't churn every file.
-- **Switching mode mid-round.** `answer` changes the instant `mode` does, but resetting
-  the round in an effect happens a paint too late — so for one frame the new answer was
-  drawn with the previous round's revealed state, showing the daily answer unblurred
-  after giving up in Endless. `useRound` resets *during render* instead. Keep it that
-  way: moving that reset back into a `useEffect` reintroduces the leak.
-
-This raises the bar rather than sealing it: the source file is still fetched and can be
-found in the network panel. Closing that would mean generating pre-blurred assets and
-only serving the full-resolution art after a solve.
-
-Weapon icons are deliberately *not* obfuscated — that round never displays the answer's
-art before it's solved, so there's nothing to leak.
-
-Two generic components back all six: `GridGame` for the attribute boards and
-`RevealGame` for the blur rounds, both parameterised by pool, columns and accessors, so
-adding a seventh is a dataset plus a config block.
+`GridGame` backs the attribute boards and `RevealGame` the blur rounds, both
+parameterised by pool, columns and accessors, so a seventh game is mostly a dataset plus
+a config block in `App.tsx`.
 
 ## Running it
 
 ```bash
 npm install
 npm run dev      # http://localhost:5174
-npm run build    # static bundle in dist/
+npm run build    # tsc -b && vite build, static bundle in dist/
 ```
 
-## How the game works
+Pushing to `main` runs `.github/workflows/deploy.yml`, which builds and publishes to
+GitHub Pages. `base: './'` keeps asset paths relative, so the site works from a project
+sub-path without configuration.
 
-You have unlimited guesses. Every guess is graded column by column:
+## How it works
 
-| Colour | Meaning |
-| --- | --- |
-| 🟩 green | exact match |
-| 🟥 red | wrong |
+**Grading is strict.** Green is an exact match, red is wrong, nothing in between — `Long`
+against an answer of `Special Long` is simply wrong, as is a number that is merely close.
+Numeric columns show a direction arrow, which is not a grade. Guesses are unlimited.
 
-Grading is strict — there is no partial credit. `Long` against an answer of
-`Special Long` is simply wrong, as is a number that is merely close. Numeric columns
-still show ▲ / ▼ pointing at the answer, which is a direction, not a grade.
+**Daily** walks a per-cycle reshuffled deck, so every subject is used once before any
+repeats, and rolls over at local midnight. Each game is salted separately so the six
+dailies don't move in lockstep. Progress and streaks live in `localStorage`, keyed per
+game.
 
-The seven compared attributes are **Class**, **Ammo**, **Action**, **Slots**,
-**Magazine**, **Damage** and **Cost**, defined in `COLUMNS` in `src/lib/game.ts`. For a
-melee weapon, Damage is its light melee attack, and Ammo and Action both read `Melee`.
+**Endless** tracks what it has served and draws only from what's left, then starts a
+fresh cycle when the pool empties — still refusing to return the subject just played,
+since that boundary is where a repeat would otherwise slip through.
 
-The dataset still carries `introduced` / `introducedLabel` (the update that added each
-weapon), it just isn't compared — add a column back to `COLUMNS` to use it.
+**Layout.** The board needs 1140px plus padding to work as a table, so below 1180px each
+guess becomes a card instead: subject on top, attributes packed underneath, no horizontal
+scrolling at any width. Cards have no header row, so each cell names its own column via
+`data-label`. Phone-sized type is a separate breakpoint at 640px, so tablets don't get
+phone labels.
 
-The daily answer walks a per-cycle reshuffled deck of the roster, so every weapon is
-used once before any repeats. It rolls over at the player's local midnight. Progress
-and streaks live in `localStorage`.
+### Not giving the answer away
 
-## The dataset
+Three things leak an answer in a blur round:
 
-The scrapers have **no npm scripts on purpose** — they hit the wiki and overwrite
-everything under `public/`, including art that has been replaced by hand, so running one
-should be a deliberate act rather than a convenient one. Invoke them directly:
+- **The element.** The art is drawn into a `<canvas>` with the blur baked into the pixels
+  (`ObscuredArt`), not an `<img>` with a CSS filter. An `<img>` can be opened in a new
+  tab, saved, or un-blurred by deleting one property in devtools.
+- **The file name.** `krampus.png` in a network log answers the question by itself, so
+  art used in a guessing round is named by a hash of its id (`obfuscate()` in
+  `scripts/wiki.mjs`) — stable across scrapes, so re-running doesn't churn every file.
+- **Switching mode mid-round.** `answer` changes the instant `mode` does, but resetting
+  the round in an effect happens a paint too late, so for one frame the new answer was
+  drawn with the previous round's revealed state — showing the daily answer unblurred
+  after giving up in Endless. `useRound` resets *during render* instead. Moving that
+  reset into a `useEffect` reintroduces the leak.
+
+The source file is still fetched and can be found in the network panel. Closing that
+would mean generating pre-blurred assets and serving full-resolution art only after a
+solve.
+
+Weapon icons are deliberately not obfuscated: that round never shows the answer's art
+before it's solved.
+
+## The datasets
+
+The scrapers have **no npm scripts on purpose**. They hit the wiki and overwrite
+everything under `public/`, including art replaced by hand, so running one should be
+deliberate rather than convenient:
 
 ```bash
-node scripts/scrape-wiki.mjs      # weapons -> src/data/weapons.raw.json + public/weapons/
+node scripts/scrape-wiki.mjs      # weapons  -> src/data/weapons.raw.json + public/weapons/
 node scripts/build-dataset.mjs    # weapons.raw.json -> weapons.json (local, no network)
-node scripts/scrape-hunters.mjs   # hunters -> src/data/hunters.json + public/hunters/
+node scripts/scrape-hunters.mjs   # hunters  -> src/data/hunters.json   + public/hunters/
 node scripts/scrape-extras.mjs    # traits + bestiary -> src/data/, public/traits/, public/bestiary/
 ```
 
 `build-dataset.mjs` is the safe one: it only re-reads the existing scrape and rewrites
 `weapons.json`, so it's what to run after editing `SCARCE_SELL_PRICE` or the class and
-action tables. The other three download.
+action tables. The other three download. Shared MediaWiki plumbing is in
+`scripts/wiki.mjs`.
 
-**Before scraping, check `git status` afterwards.** Several creature images in
-`public/bestiary/` were replaced by hand because the wiki's were poor; a re-scrape
-silently reverts them to whatever `pickArt()` picks. If that happens, restore with
-`git checkout -- public/bestiary/`.
+**Check `git status` after any scrape.** Several creature images in `public/bestiary/`
+were replaced by hand because the wiki's own art was poor, and a re-scrape reverts them
+to whatever `pickArt()` picks. Restore with `git checkout -- public/bestiary/`.
 
-### Traits and bestiary
+### Weapons — 157
 
-**85 trait pages** from `Category:Traits`, via `{{Infobox Trait}}` — Cost (upgrade
-points), Unlock (bloodline rank), Category and Type, plus the 512px banner art the page
-body uses rather than the small infobox icon. Type combinations are written
-inconsistently on the wiki ("Burn,Scarce", "Scarce, Event"), so they're canonicalised to
-a sorted ` / `-joined string — 7 distinct values.
+All 56 base weapons plus their 94 variants (*Sparks Sniper*, *Romero 77 Hatchet*,
+*LeMat Carbine*), the four melee tools, the two derringers, and the Maxim M1895. Those
+last seven live outside `Category:Weapons` — the game files them as Tools and World
+Items — so each entry carries a `source` of `Weapon`, `Tool` or `World`, and the ones
+taking no weapon-capacity slot show a dash for Slots.
 
-Traits carry two images and they do different jobs: the infobox's crisp 64px `Small`
-icon for lists and guess rows, and the page body's 512px `Big` banner for the blur round.
-Shrinking the banner into a list thumbnail reads as mush, so both are downloaded.
+- **The infobox match uses a lookahead, not a prefix test.** Pages also carry
+  `{{Infobox Weapon Skin}}` boxes for legendary skins, and "starts with
+  `{{Infobox Weapon`" matches those too — which on a tool page silently returns skin
+  data.
+- **Names come from the page path, not the infobox `Title`.** Page titles are unique, and
+  a freshly drafted page can carry a copy-pasted title (`Weapons/Burgess/Trauma` is
+  titled "Burgess Bayonet" on the wiki right now), which would collide with another
+  weapon's id. The scraper warns when the two disagree; the build fails on a duplicate.
+- **Class and action type are the only hand-tabulated fields**, since the wiki defines
+  them in prose rather than the infobox. They're cross-checked at build time against each
+  weapon's own description, and the build warns if table and prose disagree. Variants
+  inherit both from their base; `VARIANT_CLASS` and `VARIANT_ACTION` hold the exceptions.
+  The cross-check caught two of the three semi-automatic conversions on its own.
 
-**16 creatures** from `Category:Monsters` (10) and `Category:Targets` (6). These pages
-carry *no infobox at all* — just prose and file links — so name, art and the opening
-paragraph are all that can be had.
+### Hunters — 195
 
-Art is chosen by preference rather than by taking the page's first image, which is
-usually an atmospheric scene rather than the creature. `pickArt()` prefers, in order:
-the in-game bestiary plate `Lore <Name> Mastery.png` (~368×560 of just the creature —
-**12 of 16** have one), then a model render, then the bare `<Name>.jpg`, then a wide
-`Mastery.jpg`, then any file naming the creature. Brute, Firebreather and Hellborn have
-only wide art; Ursa Mortis has only teasers and wallpapers. Those four get centre-cropped
-in the 2:3 frame, which still lands on the creature.
+One entry per wiki page. The wiki draws the line between "a different hunter" and "a
+different look", and the scraper follows it: `Hunters/Scourge: Midian` and
+`Hunters/Scourge: Morrigan` are separate pages and stay separate hunters, while
+`Hunters/Oliver Whitman` is one page using `{{Infobox Hunter Variant}}` packing several
+forms into it (Rookie/Survivor/Veteran, or Dorothy Alice's Dream/Nightmare). Those are
+alternate looks for one hunter, so the page collapses to its first form. 32 pages do.
 
-**10 traits have been removed from the game** and are excluded from play. The wiki keeps
-their pages in `Category:Traits` with nothing on the infobox to say so — the only signal
-is an update history line ("Tomahawk removed from the game"), plus blank Cost and Unlock
-fields. Blankness alone is not enough to filter on: event and pact traits are blank too
-and are very much still in the game, so the scraper matches on the history text. That
-leaves 75 playable.
-
-Event and pact traits can't be bought, so the wiki records no cost for them — they're
-stored as **0** rather than as unknown, which keeps every trait on one scale so every
-guess gets a ▲/▼.
-
-The board compares Cost, **Rank**, Category and Type. These attributes do not identify a
-trait uniquely and can't be made to: 30 of 75 traits (40%) still share their whole
-combination with another, because 24 of them have no cost *or* unlock rank on the wiki
-and collapse together. Rank is what makes it bearable — without it the figure is 74%.
-When an all-green guess isn't the answer, the board says so outright rather than looking
-broken.
-
-### Hunters
-
-**One entry per wiki page — 195 hunters.** The wiki draws the line between "a different
-hunter" and "a different look" for us, and the scraper follows it:
-
-- `Hunters/Scourge: Midian` and `Hunters/Scourge: Morrigan` are separate pages, so they
-  stay separate hunters.
-- `Hunters/Oliver Whitman` is one page using `{{Infobox Hunter Variant}}`, which packs
-  several forms into it (Rookie/Survivor/Veteran, or Dorothy Alice's Dream/Nightmare) as
-  `<Form>_title` / `<Form>_caption` keys plus an `images=` list. Those are alternate
-  looks for one hunter, so the page collapses to its first form — that form's portrait
-  and blurb, under the hunter's own name. 32 pages collapse this way.
-
-Every quote is distinct: no duplicates, no near-duplicates, and the most similar pair in
-the roster shares only 14% of its words, so the quote round is never ambiguous.
+Every quote is distinct — no duplicates, no near-duplicates, most similar pair shares 14%
+of its words — so the quote round is never ambiguous. It redacts the answer's own name
+from the blurb, because Dorothy Alice's opens "Dorothy's upbringing was idyllic". See
+`redact()` in `src/lib/hunters.ts`.
 
 Three hunters have no portrait, because the file their page references was never
-uploaded to the wiki: **Lynch**, **The Dark Friar** (both only have a `Wallpaper` image)
-and **Hell's Profiteer** (no image at all). They play in the quote round and are
-excluded from the portrait round.
+uploaded: **Lynch** and **The Dark Friar** (only a `Wallpaper` image) and
+**Hell's Profiteer** (nothing at all). They play in the quote round, not the art round.
 
-The quote round redacts the answer's own name from its blurb — Dorothy Alice's opens
-"Dorothy's upbringing was idyllic", which would give it away outright. See `redact()` in
-`src/lib/hunters.ts`.
+### Traits — 75 playable of 85 pages
 
-The roster is **157 weapons**: all 56 base weapons plus their 94 variants (*Sparks
-Sniper*, *Romero 77 Hatchet*, *LeMat Carbine*, …), the four melee tools (Knife, Heavy
-Knife, Knuckle Knife, Dusters), the two derringers, and the Maxim M1895.
+**Ten traits have been removed from the game** and are excluded. The wiki keeps their
+pages in `Category:Traits` with nothing on the infobox to say so — the only signal is an
+update history line ("Tomahawk removed from the game") plus blank Cost and Unlock.
+Blankness alone is not a safe filter: 24 live event and pact traits are blank too, so the
+scraper matches the history text.
 
-Those last seven live outside `Category:Weapons` — the game files them as Tools and
-World Items — so each entry carries a `source` of `Weapon`, `Tool` or `World`. Tools and
-world pickups take no weapon-capacity slot, so their Slots cell reads `—`.
+Those event and pact traits can't be bought, so the wiki records no cost. They're stored
+as **0** rather than unknown, keeping every trait on one scale so every guess gets an
+arrow.
 
-- **`scripts/scrape-wiki.mjs`** pulls every page in `Category:Weapons` through the
-  MediaWiki API — `Weapons/Sparks` and `Weapons/Sparks/Sniper` alike — plus
-  `Category:Melee Tools` and the named extras in `EXTRA_PAGES` (the two derringers and
-  the Maxim M1895). It parses each `{{Infobox Weapon}}`,
-  `{{Infobox Tool}}` or `{{Infobox World Item}}` — they share field names — and
-  downloads the icons into `public/weapons/`. Output: `src/data/weapons.raw.json`.
+Cost, Rank, Category and Type **cannot** identify a trait uniquely: 30 of 75 still share
+their whole combination with another, because 24 have neither a cost nor a rank and
+collapse at `0/0` — the largest tie being eight Event traits. Rank is what makes it
+bearable; without it the figure is 74%. When an all-green guess isn't the answer, the
+board says "Close but not quite" rather than looking broken.
 
-  The infobox match uses a lookahead rather than a prefix test, because pages also carry
-  `{{Infobox Weapon Skin}}` boxes for legendary skins: a naive "starts with
-  `{{Infobox Weapon`" test matches those, and on a tool page silently returns skin data.
-- **`scripts/build-dataset.mjs`** turns that into `src/data/weapons.json` — the file the
-  app imports.
+Each trait carries two images doing different jobs: the infobox's crisp 64px `Small` icon
+for lists and guess rows, and the page body's 512px `Big` banner for the blur round —
+shrinking the banner into a thumbnail reads as mush. Type combinations are written
+inconsistently ("Burn,Scarce", "Scarce, Event") and are canonicalised to a sorted
+slash-joined string, giving 7 distinct values.
 
-Names come from the page path, not the infobox `Title`: page titles are unique, and a
-freshly drafted page can carry a copy-pasted title (`Weapons/Burgess/Trauma` is titled
-"Burgess Bayonet" on the wiki right now), which would collide with another weapon's id.
-The scraper warns when the two disagree, and the build fails on a duplicate id.
+### Bestiary — 16
 
-Almost every field comes straight from the wiki infobox. Two do not: the wiki defines
-weapon **class** and **action type** only in prose on its Weapons page, so those are
-tabulated in `build-dataset.mjs` and cross-checked at build time against each weapon's
-own description (the build warns if the table and the prose disagree).
+10 monsters and 6 bosses. These pages carry **no infobox at all** — just prose and file
+links — so name, art and the opening paragraph are all there is, which is why the
+bestiary is a blur round with no attribute grid.
 
-Variants inherit class and action from their base weapon. `VARIANT_CLASS` and
-`VARIANT_ACTION` list the exceptions — the Sparks Pistol cut down to a handgun, the
-LeMat/Officer Carbines given stocks, and the three semi-automatic conversions
-(Martini-Henry Ironside, Mosin-Nagant Avtomat, Vetterli 71 Cyclone). The cross-check
-found the last two on its own.
+`pickArt()` chooses by preference rather than taking the page's first image, which is
+usually an atmospheric scene rather than the creature: the in-game plate
+`Lore <Name> Mastery.png` first, then a model render, then the bare `<Name>.jpg`, then a
+wide `Mastery.jpg`, then any file naming the creature. Several images have since been
+replaced by hand; because those vary in aspect ratio (~0.66 for plates, ~1.0 for
+renders), the round fits art inside its frame rather than cropping, via `fit="contain"`.
 
-### Known data gaps
+### Known gaps
 
-**Scarce weapons have no price on the wiki.** They're claimed with Pledge Marks, so the
-infobox carries no Hunt Dollar value at all. Their in-game *sell* values are recorded by
-hand in `SCARCE_SELL_PRICE` in `build-dataset.mjs` — Flame Rifle 250, Shredder 200,
-Wildland 175, Homestead 78 150 — and the build warns if a new Scarce weapon appears
-without one. These are the only numbers in the project not sourced from the wiki.
-
-### Weapons that are not live yet
-
-The wiki documents announced weapons before they ship. `UNRELEASED` in
-`build-dataset.mjs` holds those back so they can't be the answer or a guess. It is
-currently empty — the Burgess family is included ahead of Update 2.9 (8 September 2026)
-by request, and until the wiki uploads its art those three weapons render a "no icon
-yet" placeholder instead of an image. The wiki also carries 2.9's balance changes
-(Terminus damage, Hunting Bow range) ahead of the patch.
-
-## Roadmap
-
-The obvious next modes, in LoLdle's shape: **hunter**, **boss/monster**, **tool &
-consumable**, plus icon-zoom and quote rounds. The grid and comparison engine are
-attribute-driven, so a new mode is mostly a new dataset plus a new `COLUMNS` list.
+- **Scarce weapons have no price on the wiki.** They're claimed with Pledge Marks, so the
+  infobox carries no Hunt Dollar value. Their in-game *sell* values are recorded by hand
+  in `SCARCE_SELL_PRICE` — Flame Rifle 250, Shredder 200, Wildland 175, Homestead 78 150
+  — and the build warns if a new Scarce weapon appears without one. These are the only
+  numbers here not from the wiki.
+- **The wiki runs ahead of the live game.** `UNRELEASED` in `build-dataset.mjs` holds
+  announced-but-unshipped weapons out of play; it is currently empty, with the Burgess
+  family included ahead of Update 2.9 by request. Until the wiki uploads their art those
+  three show a "no icon yet" placeholder. The dataset also carries 2.9's balance changes
+  ahead of the patch.
 
 ## Licence
 
-Three different things live in this repo and they can't share one licence.
+Three different things live here and they can't share one licence.
 
 | What | Licence |
 | --- | --- |
 | **Code** — `src/`, `scripts/`, config | MIT, see [`LICENSE`](LICENSE) |
 | **Data** — `src/data/*.json` | CC BY-SA 4.0, adapted from the wiki |
-| **Images** — `public/{weapons,hunters,traits,bestiary}/`, `src/assets/` | Crytek's, neither ours nor the wiki's to license |
+| **Images** — `public/**`, `src/assets/` | Crytek's, not ours or the wiki's to license |
 
-**Code is MIT.** The share-alike on the wiki text does not reach it: the app isn't a
-derivative of that prose, it just reads a file.
+The share-alike on the wiki text does not reach the code: the app isn't a derivative of
+that prose, it just reads a file. The datasets do embed wiki text verbatim — weapon and
+trait descriptions, hunter lore captions, creature blurbs — so they inherit the
+[wiki's licence](https://creativecommons.org/licenses/by-sa/4.0/) and keep its
+attribution and share-alike.
 
-**Data is CC BY-SA 4.0.** The datasets embed wiki text verbatim — weapon and trait
-descriptions, hunter lore captions, creature blurbs — so they inherit the
-[wiki's licence](https://creativecommons.org/licenses/by-sa/4.0/) and must keep the
-attribution and share-alike. The raw numbers (damage, slots, cost) are facts and aren't
-copyrightable on their own, but they sit in the same files as the prose. Values are
-reshaped rather than copied wholesale: see `scripts/build-dataset.mjs` for the
-normalisation, and `SCARCE_SELL_PRICE` for the four figures that aren't from the wiki.
+The game art is Crytek's, and no licence choice here changes that: the wiki hosts it but
+cannot relicense someone else's intellectual property. It's used on the usual fan-project
+footing — unofficial and non-commercial.
 
-**Images are Crytek's.** This is the part no licence choice fixes. The wiki hosts the
-game art but cannot relicense someone else's intellectual property, so CC BY-SA doesn't
-apply to it and neither does MIT. They're included here on the same footing as any fan
-project: unofficial, non-commercial, and dependent on Crytek's tolerance of fan works.
-If you fork this and do anything commercial with it, that's the piece to think hard
-about — strip the art and point at the wiki's URLs instead.
-
-Before publishing, put your name in the `LICENSE` copyright line.
-
-## Credits
-
-Weapon data, descriptions and images come from the
-[Hunt: Showdown 1896 Wiki](https://huntshowdown.wiki.gg) and are used under CC BY-SA.
 The page backdrop (`src/assets/site-background.jpg`) is the wiki's own
-[Site-background.jpg](https://huntshowdown.wiki.gg/wiki/File:Site-background.jpg). Hunt: Showdown is a trademark of Crytek. This is an unofficial fan project
-with no affiliation to Crytek.
+[Site-background.jpg](https://huntshowdown.wiki.gg/wiki/File:Site-background.jpg).
+Hunt: Showdown is a trademark of Crytek. This is an unofficial fan project with no
+affiliation to Crytek.
