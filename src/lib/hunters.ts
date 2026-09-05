@@ -5,7 +5,7 @@ export interface Hunter {
   name: string
   /** Wiki page the form came from. Several forms can share one page. */
   page: string
-  /** "Dream", "Nightmare", "Veteran"… Null for a single-form hunter. */
+  /** "Dream", "Nightmare", "Ringmaster"… Null for a single-form hunter. */
   form: string | null
   /** The person behind the alias, where the wiki names one. */
   realName: string | null
@@ -26,6 +26,10 @@ interface HunterDataset {
 
 const data = dataset as unknown as HunterDataset
 
+/**
+ * Every hunter you can own. A wiki page can hold more than one: forms you buy or unlock
+ * separately are separate answers, rank tiers are not. See the scraper's `entriesOf`.
+ */
 export const HUNTERS: Hunter[] = data.hunters
 /** Portrait round can only use hunters the wiki actually has art for. */
 export const HUNTERS_WITH_PORTRAIT: Hunter[] = data.hunters.filter((h) => Boolean(h.portrait))

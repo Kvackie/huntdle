@@ -5,11 +5,11 @@
  * Title/image/caption. The rest use `{{Infobox Hunter Variant}}`, which packs several
  * forms into one page — "Dorothy Alice: Dream" and "Dorothy Alice: Nightmare", or the
  * Rookie/Survivor/Veteran tiers — as `<Form>_title`, `<Form>_caption` keys plus an
- * `images=` list mapping each file to its form. Each form becomes its own entry, since
- * each has its own name, portrait and lore blurb.
+ * `images=` list mapping each file to its form. Each form carries its own portrait and
+ * lore blurb, so most become their own entry; see `entriesOf` for the ones that don't.
  *
  * Output:
- *   src/data/hunters.json        - one entry per form
+ *   src/data/hunters.json        - one entry per hunter you can own
  *   public/hunters/<slug>.png    - portrait
  *
  *   node scripts/scrape-hunters.mjs
@@ -60,46 +60,69 @@ function parseImageList(raw) {
 }
 
 /**
- * One entry per wiki page — the hunter, not their skins.
- *
- * `{{Infobox Hunter Variant}}` pages pack several forms into one page (Dorothy Alice's
- * Dream and Nightmare, the Rookie/Survivor/Veteran tiers). Those are alternate looks for
- * a single hunter, so the page collapses to its first form: that form's portrait and
- * blurb, under the hunter's own name rather than the form's.
+ * Rookie, Survivor and Veteran are one hunter at three ranks — you level into them, you
+ * don't acquire them — so they are one answer, not three. The wiki says so in the Source
+ * field, except on Tennessee Morgan, whose tiers all name the Story Challenge that grants
+ * them; the form names settle that case.
  */
-function entryOf(page, fields, isVariant) {
+const isTier = (form, source) =>
+  /Hunter Progression/i.test(source) || form === 'Survivor' || form === 'Veteran'
+
+/**
+ * The entries a page is worth. A plain `{{Infobox Hunter}}` is one hunter.
+ *
+ * `{{Infobox Hunter Variant}}` packs several forms into one page, and how you get a form
+ * decides whether it is its own hunter. The Royal Phantom costs 1000 Blood Bonds while
+ * The Phantom is DLC, Post Malone's Ringmaster and Disciple of Death come from two
+ * different events, Ambrose Hazen's Officer is a Story Challenge reward — those are all
+ * bought and owned separately, so each is an answer of its own with its own portrait and
+ * blurb. Rank tiers are not, and fold into the hunter they belong to.
+ *
+ * The page's first form is the hunter themself and keeps the page's name; the rest go by
+ * the wiki's own title for them, so the answer reads "The Royal Phantom" rather than
+ * "The Phantom" a second time.
+ */
+function entriesOf(page, fields, isVariant) {
   const shared = {
     page,
-    name: page.replace('Hunters/', ''),
     realName: stripWikitext(fields.Name) || null,
     pacts: stripWikitext(fields.Pacts) || null,
     eventBoost: stripWikitext(fields['Event Boost']) || null,
   }
+  const pageName = page.replace('Hunters/', '')
 
   if (!isVariant) {
-    return {
+    return [{
       ...shared,
+      name: pageName,
       form: null,
       caption: stripWikitext(fields.caption),
       image: fields.image?.trim() || null,
       ...classifySource(fields.Source ?? ''),
-    }
+    }]
   }
 
   const images = parseImageList(fields.images)
   // Form names are whatever prefixes a "<Form>_title" key; the first is the default look.
-  const form = Object.keys(fields)
+  const forms = Object.keys(fields)
     .filter((k) => k.endsWith('_title'))
-    .map((k) => k.slice(0, -'_title'.length))[0]
+    .map((k) => k.slice(0, -'_title'.length))
 
-  return {
-    ...shared,
-    form: form ?? null,
-    caption: stripWikitext(fields[`${form}_caption`]),
-    image: images[form] ?? null,
+  const entries = []
+  forms.forEach((form, i) => {
     // A form can override the shared source; fall back to the page's.
-    ...classifySource(fields[`${form}_Source`] ?? fields.Source ?? ''),
-  }
+    const source = fields[`${form}_Source`] ?? fields.Source ?? ''
+    if (i > 0 && isTier(form, stripWikitext(source))) return
+    entries.push({
+      ...shared,
+      name: i === 0 ? pageName : stripWikitext(fields[`${form}_title`]),
+      form,
+      caption: stripWikitext(fields[`${form}_caption`]),
+      image: images[form] ?? null,
+      ...classifySource(source),
+    })
+  })
+  return entries
 }
 
 async function main() {
@@ -112,7 +135,7 @@ async function main() {
   for (const [page, wikitext] of pages) {
     const box = parseTemplate(wikitext, INFOBOX_RE)
     if (!box) { console.warn(`  ! no infobox for ${page}`); continue }
-    hunters.push(entryOf(page, box.fields, box.tag.includes('Variant')))
+    hunters.push(...entriesOf(page, box.fields, box.tag.includes('Variant')))
   }
 
   // Names must be unique — they're the answer, and the id.
@@ -162,7 +185,9 @@ async function main() {
 
   const noPortrait = hunters.filter((h) => !h.portrait)
   const noCaption = hunters.filter((h) => !h.caption)
+  const extra = hunters.filter((h) => h.name !== h.page.replace('Hunters/', ''))
   console.log(`Wrote ${hunters.length} hunters (${hunters.length - noPortrait.length} portraits)`)
+  console.log(`  ${titles.length} pages + ${extra.length} separately acquired forms`)
   if (noPortrait.length) {
     console.log(`  ! no portrait (${noPortrait.length}):`)
     for (const h of noPortrait) console.log(`      ${h.name}  [${h.page}] image=${h.image ?? 'none'}`)

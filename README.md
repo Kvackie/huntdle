@@ -10,8 +10,8 @@ progress and streak:
 | --- | --- | --- |
 | **Weapon** | Attribute grid: class, ammo, action, slots, magazine, damage, cost | 157 |
 | **Trait** | Attribute grid: cost, rank, category, type | 58 |
-| **Hunter quote** | Lore blurb with the hunter's own name blacked out | 195 |
-| **Hunter art** | Blurred greyscale portrait | 192 |
+| **Hunter quote** | Lore blurb with the hunter's own name blacked out | 225 |
+| **Hunter art** | Blurred greyscale portrait | 222 |
 | **Trait icon** | Blurred greyscale trait banner | 58 |
 | **Bestiary** | Blurred greyscale monster or boss art | 16 |
 
@@ -119,19 +119,31 @@ taking no weapon-capacity slot show a dash for Slots.
   inherit both from their base; `VARIANT_CLASS` and `VARIANT_ACTION` hold the exceptions.
   The cross-check caught two of the three semi-automatic conversions on its own.
 
-### Hunters — 195
+### Hunters — 225 from 195 pages
 
-One entry per wiki page. The wiki draws the line between "a different hunter" and "a
-different look", and the scraper follows it: `Hunters/Scourge: Midian` and
-`Hunters/Scourge: Morrigan` are separate pages and stay separate hunters, while
-`Hunters/Oliver Whitman` is one page using `{{Infobox Hunter Variant}}` packing several
-forms into it (Rookie/Survivor/Veteran, or Dorothy Alice's Dream/Nightmare). Those are
-alternate looks for one hunter, so the page collapses to its first form. 32 pages do.
+163 pages hold a single hunter. The other 32 use `{{Infobox Hunter Variant}}` to pack
+several forms into one page, 82 between them, and **how you get a form decides whether
+it is a hunter of its own**. Rookie, Survivor and Veteran are one hunter at three ranks —
+you level into them, the wiki sources them as `Hunter Progression` — so they collapse
+into one answer. That accounts for 20 forms. The other 30 are bought and owned
+separately: The Royal Phantom costs 1000 Blood Bonds where The Phantom is DLC, Post
+Malone's Ringmaster and Disciple of Death come from two different events, Ambrose Hazen's
+Officer is a Story Challenge reward. Each of those is its own answer, named by the wiki's
+own title for it, while a page's first form keeps the page's name.
+
+Tennessee Morgan is the one page whose Source field can't decide this: all three tiers
+name the Story Challenge that grants them rather than `Hunter Progression`. The form
+names settle it, which is why `isTier` checks both.
 
 Every quote is distinct — no duplicates, no near-duplicates, most similar pair shares 14%
-of its words — so the quote round is never ambiguous. It redacts the answer's own name
-from the blurb, because Dorothy Alice's opens "Dorothy's upbringing was idyllic". See
-`redact()` in `src/lib/hunters.ts`.
+of its words — so the quote round is never ambiguous. Forms of one hunter are no closer
+than average; The Rat and The Drowned Rat share no words at all. It redacts the answer's
+own name from the blurb, because Dorothy Alice's opens "Dorothy's upbringing was idyllic".
+See `redact()` in `src/lib/hunters.ts`.
+
+Portraits are just as separable. A perceptual sweep of all 222 finds no duplicate pair,
+and the tightest match between two forms of one hunter (The Viper's Rise and Frenzy)
+is looser than the tightest match between two hunters the game already ships apart.
 
 Three hunters have no portrait, because the file their page references was never
 uploaded: **Lynch** and **The Dark Friar** (only a `Wallpaper` image) and
